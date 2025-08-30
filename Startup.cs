@@ -18,12 +18,7 @@ namespace GloboClimaFrontend
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddSession(options =>
-            {
-                options.IdleTimeout = TimeSpan.FromHours(1);
-                options.Cookie.HttpOnly = true;
-                options.Cookie.IsEssential = true;
-            });
+            services.AddSession();
             services.AddScoped<GloboClimaFrontend.Services.IJwtService, GloboClimaFrontend.Services.JwtService>();
         }
 

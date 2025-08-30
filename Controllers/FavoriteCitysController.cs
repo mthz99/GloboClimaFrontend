@@ -21,10 +21,9 @@ namespace GloboClimaFrontend.Controllers
         public async Task<IActionResult> AddFavoriteCity(string cityName, string countryCode)
         {
             var userId = HttpContext.Session.GetString("UserId");
-            var userName = HttpContext.Session.GetString("UserName");
-            var userPassword = HttpContext.Session.GetString("UserPassword");
-            
-            var token = userId != null ? await _jwtService.GetJwtTokenAsync(userId, userName,userPassword ) : null;
+            var username = HttpContext.Session.GetString("userCredentials");
+            var password = HttpContext.Session.GetString("passwordCredentials");
+            var token = await _jwtService.GetJwtTokenAsync(userId, username, password);
 
             if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token) || string.IsNullOrEmpty(_baseUrl))
             {
@@ -64,14 +63,10 @@ namespace GloboClimaFrontend.Controllers
             var password = HttpContext.Session.GetString("passwordCredentials");
             var token = await _jwtService.GetJwtTokenAsync(userId, username, password);
 
-            if (string.IsNullOrEmpty(token))
+           if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token) || string.IsNullOrEmpty(_baseUrl))
             {
-                return Content($"erro no token");
-            }
-
-            if (string.IsNullOrEmpty(_baseUrl))
-            {
-                return Content($"erro no _baseUrl");
+                TempData["Error"] = "Usuário não autenticado.";
+                return RedirectToAction("GetFavoriteCityList");
             }
 
             var url = $"{_baseUrl}/api/favorites/GetCityFavorites?userId={userId}";
@@ -118,7 +113,7 @@ namespace GloboClimaFrontend.Controllers
             var username = HttpContext.Session.GetString("userCredentials");
             var password = HttpContext.Session.GetString("passwordCredentials");
             var token = await _jwtService.GetJwtTokenAsync(userId, username, password);
-            
+
             if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token) || string.IsNullOrEmpty(_baseUrl) || string.IsNullOrEmpty(cityId))
             {
                 TempData["Error"] = "Cidade favorita não encontrada.";
