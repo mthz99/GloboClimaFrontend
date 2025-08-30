@@ -60,14 +60,10 @@ namespace GloboClimaFrontend.Controllers
         public async Task<IActionResult> GetFavoriteCityList()
         {
             var userId = HttpContext.Session.GetString("UserId");
-            var userName = HttpContext.Session.GetString("UserName");
-            var userPassword = HttpContext.Session.GetString("UserPassword");
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Content($"erro no userId");
-            }
+            var username = HttpContext.Session.GetString("userCredentials");
+            var password = HttpContext.Session.GetString("passwordCredentials");
+            var token = await _jwtService.GetJwtTokenAsync(userId, username, password);
 
-            var token = userId != null ? await _jwtService.GetJwtTokenAsync(userId, userName, userPassword) : null;
             if (string.IsNullOrEmpty(token))
             {
                 return Content($"erro no token");
@@ -119,9 +115,10 @@ namespace GloboClimaFrontend.Controllers
         public async Task<IActionResult> DeleteCityFavorite(string cityId)
         {
             var userId = HttpContext.Session.GetString("UserId");
-            var userName = HttpContext.Session.GetString("UserName");
-            var userPassword = HttpContext.Session.GetString("UserPassword");
-            var token = userId != null ? await _jwtService.GetJwtTokenAsync(userId, userName, userPassword) : null;
+            var username = HttpContext.Session.GetString("userCredentials");
+            var password = HttpContext.Session.GetString("passwordCredentials");
+            var token = await _jwtService.GetJwtTokenAsync(userId, username, password);
+            
             if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token) || string.IsNullOrEmpty(_baseUrl) || string.IsNullOrEmpty(cityId))
             {
                 TempData["Error"] = "Cidade favorita não encontrada.";

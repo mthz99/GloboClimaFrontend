@@ -20,10 +20,10 @@ namespace GloboClimaFrontend.Controllers
         [Route("Favorites/AdicionarPais")]
         public async Task<IActionResult> AddCountryFavorite( string countryName, string countryCode)
         {
-            var userId = HttpContext.Session.GetString("UserId");
-            var userName = HttpContext.Session.GetString("UserName");
-            var userPassword = HttpContext.Session.GetString("UserPassword");
-            var token = userId != null ? await _jwtService.GetJwtTokenAsync(userId, userName, userPassword) : null;
+           var userId = HttpContext.Session.GetString("UserId");
+            var username = HttpContext.Session.GetString("userCredentials");
+            var password = HttpContext.Session.GetString("passwordCredentials");
+            var token = await _jwtService.GetJwtTokenAsync(userId, username, password);
             if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token) || string.IsNullOrEmpty(_baseUrl) || string.IsNullOrEmpty(countryName) || string.IsNullOrEmpty(countryCode))
             {
                 TempData["Error"] = "Informações insuficientes para adicionar país favorito.";
@@ -60,9 +60,9 @@ namespace GloboClimaFrontend.Controllers
             public async Task<IActionResult> GetFavoriteCountryList()
             {
                 var userId = HttpContext.Session.GetString("UserId");
-                var userName = HttpContext.Session.GetString("UserName");
-                var userPassword = HttpContext.Session.GetString("UserPassword");
-                var token = userId != null ? await _jwtService.GetJwtTokenAsync(userId, userName, userPassword) : null;
+            var username = HttpContext.Session.GetString("userCredentials");
+            var password = HttpContext.Session.GetString("passwordCredentials");
+            var token = await _jwtService.GetJwtTokenAsync(userId, username, password);
                 if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token) || string.IsNullOrEmpty(_baseUrl))
                 {
                     return RedirectToAction("Login", "Login");
@@ -107,10 +107,10 @@ namespace GloboClimaFrontend.Controllers
             [Route("Favorites/ApagarPais")]
             public async Task<IActionResult> DeleteCountryFavorite(string countryId)
             {
-                var userId = HttpContext.Session.GetString("UserId");
-                var userName = HttpContext.Session.GetString("UserName");
-                var userPassword = HttpContext.Session.GetString("UserPassword");
-                var token = userId != null ? await _jwtService.GetJwtTokenAsync(userId, userName, userPassword) : null;
+               var userId = HttpContext.Session.GetString("UserId");
+            var username = HttpContext.Session.GetString("userCredentials");
+            var password = HttpContext.Session.GetString("passwordCredentials");
+            var token = await _jwtService.GetJwtTokenAsync(userId, username, password);
                 if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token) || string.IsNullOrEmpty(_baseUrl) || string.IsNullOrEmpty(countryId))
                 {
                     TempData["Error"] = "País favorito não encontrado.";
