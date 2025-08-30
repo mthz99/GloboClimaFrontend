@@ -9,13 +9,9 @@
   <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.0" />
  </ItemGroup>
 <ItemGroup>
-  <ViewsToCopy Include="Views\**\*.*" />
+  <Content Include="Views\**\*.*">
+    <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+  </Content>
+  <Content Include="wwwroot\**\*.*" CopyToPublishDirectory="Always" />
 </ItemGroup>
-
-<Target Name="CopyViewsFolder" AfterTargets="Publish">
-  <Copy
-    SourceFiles="@(ViewsToCopy)"
-    DestinationFolder="$(PublishDir)Views\%(RecursiveDir)"
-    SkipUnchangedFiles="true" />
-</Target>
 </Project>
