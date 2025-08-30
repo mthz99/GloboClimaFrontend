@@ -68,9 +68,14 @@ namespace GloboClimaFrontend.Controllers
                     // Autenticado com sucesso
                     var json = await response.Content.ReadAsStringAsync();
                     var userId = Newtonsoft.Json.Linq.JObject.Parse(json)["userId"]?.ToString();
+                    var userCredentials = Newtonsoft.Json.Linq.JObject.Parse(json)["username"]?.ToString();
+                    var passwordCredentials = Newtonsoft.Json.Linq.JObject.Parse(json)["password"]?.ToString();
+
                     if (!string.IsNullOrEmpty(userId))
                     {
                         HttpContext.Session.SetString("UserId", userId);
+                        HttpContext.Session.SetString("userCredentials", userCredentials);
+                        HttpContext.Session.SetString("passwordCredentials", passwordCredentials);
                     }
                     return RedirectToAction("Index", "Home");
                 case System.Net.HttpStatusCode.Unauthorized:

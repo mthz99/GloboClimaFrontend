@@ -6,7 +6,7 @@ namespace GloboClimaFrontend.Services
 {
     public interface IJwtService
     {
-    Task<string> GetJwtTokenAsync(string userId);
+    Task<string> GetJwtTokenAsync(string userId, string userName, string userPassword);
     }
 
     public class JwtService : IJwtService
@@ -21,21 +21,10 @@ namespace GloboClimaFrontend.Services
             _basicPassword = configuration["Jwt_Password"];
         }
 
-        public async Task<string> GetJwtTokenAsync(string userId)
+        public async Task<string> GetJwtTokenAsync(string userId, string userName, string userPassword)
         {
-            string EncryptSha256(string input)
-            {
-                using (var sha256 = System.Security.Cryptography.SHA256.Create())
-                {
-                    var bytes = System.Text.Encoding.UTF8.GetBytes(input);
-                    var hash = sha256.ComputeHash(bytes);
-                    return string.Concat(hash.Select(b => b.ToString("x2")));
-                }
-            }
-
-            var encryptedUsername = EncryptSha256(_basicUsername);
-            var encryptedPassword = EncryptSha256(_basicPassword);
-            var basicAuth = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes($"{encryptedUsername}:{encryptedPassword}"));
+            
+            var basicAuth = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes($"{userName}:{userPassword}"));
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", basicAuth);
             var body = new { UserId = userId };

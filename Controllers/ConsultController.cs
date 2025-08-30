@@ -21,7 +21,9 @@ namespace GloboClimaFrontend.Controllers
         public async Task<IActionResult> ConsultWeatherCity(string cidade, string codigoPais)
         {
             var userId = HttpContext.Session.GetString("UserId");
-            var token = await _jwtService.GetJwtTokenAsync(userId);
+            var username = HttpContext.Session.GetString("userCredentials");
+            var password = HttpContext.Session.GetString("passwordCredentials");
+            var token = await _jwtService.GetJwtTokenAsync(userId, username ?? "", password ?? "");
 
             var url = $"{_baseUrl}/api/weather/GetCityWeather?userId={userId}&cityName={cidade}&countryCode={codigoPais}";
             using var client = new HttpClient();
@@ -67,7 +69,9 @@ namespace GloboClimaFrontend.Controllers
         public async Task<IActionResult> ConsultCountryPost(string nomePais)
         {
             var userId = HttpContext.Session.GetString("UserId");
-            var token = await _jwtService.GetJwtTokenAsync(userId);
+            var username = HttpContext.Session.GetString("userCredentials");
+            var password = HttpContext.Session.GetString("passwordCredentials");
+            var token = await _jwtService.GetJwtTokenAsync(userId, username, password);
 
             if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
             {

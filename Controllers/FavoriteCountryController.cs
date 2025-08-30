@@ -21,7 +21,9 @@ namespace GloboClimaFrontend.Controllers
         public async Task<IActionResult> AddCountryFavorite( string countryName, string countryCode)
         {
             var userId = HttpContext.Session.GetString("UserId");
-            var token = userId != null ? await _jwtService.GetJwtTokenAsync(userId) : null;
+            var userName = HttpContext.Session.GetString("UserName");
+            var userPassword = HttpContext.Session.GetString("UserPassword");
+            var token = userId != null ? await _jwtService.GetJwtTokenAsync(userId, userName, userPassword) : null;
             if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token) || string.IsNullOrEmpty(_baseUrl) || string.IsNullOrEmpty(countryName) || string.IsNullOrEmpty(countryCode))
             {
                 TempData["Error"] = "Informações insuficientes para adicionar país favorito.";
@@ -58,7 +60,9 @@ namespace GloboClimaFrontend.Controllers
             public async Task<IActionResult> GetFavoriteCountryList()
             {
                 var userId = HttpContext.Session.GetString("UserId");
-                var token = userId != null ? await _jwtService.GetJwtTokenAsync(userId) : null;
+                var userName = HttpContext.Session.GetString("UserName");
+                var userPassword = HttpContext.Session.GetString("UserPassword");
+                var token = userId != null ? await _jwtService.GetJwtTokenAsync(userId, userName, userPassword) : null;
                 if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token) || string.IsNullOrEmpty(_baseUrl))
                 {
                     return RedirectToAction("Login", "Login");
@@ -104,7 +108,9 @@ namespace GloboClimaFrontend.Controllers
             public async Task<IActionResult> DeleteCountryFavorite(string countryId)
             {
                 var userId = HttpContext.Session.GetString("UserId");
-                var token = userId != null ? await _jwtService.GetJwtTokenAsync(userId) : null;
+                var userName = HttpContext.Session.GetString("UserName");
+                var userPassword = HttpContext.Session.GetString("UserPassword");
+                var token = userId != null ? await _jwtService.GetJwtTokenAsync(userId, userName, userPassword) : null;
                 if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token) || string.IsNullOrEmpty(_baseUrl) || string.IsNullOrEmpty(countryId))
                 {
                     TempData["Error"] = "País favorito não encontrado.";
