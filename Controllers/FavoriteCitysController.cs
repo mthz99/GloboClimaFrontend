@@ -56,11 +56,22 @@ namespace GloboClimaFrontend.Controllers
         public async Task<IActionResult> GetFavoriteCityList()
         {
             var userId = HttpContext.Session.GetString("UserId");
-            var token = userId != null ? await _jwtService.GetJwtTokenAsync(userId) : null;
-            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token) || string.IsNullOrEmpty(_baseUrl))
+            if (string.IsNullOrEmpty(userId))
             {
-                return RedirectToAction("Login", "Login");
+                return Content($"erro no userId");
             }
+
+            var token = userId != null ? await _jwtService.GetJwtTokenAsync(userId) : null;
+            if (string.IsNullOrEmpty(token))
+            {
+                return Content($"erro no token");
+            }
+
+            if (string.IsNullOrEmpty(_baseUrl))
+            {
+                return Content($"erro no _baseUrl");
+            }
+
             var url = $"{_baseUrl}/api/favorites/GetCityFavorites?userId={userId}";
             List<FavoriteCityViewModel> favoriteCities = new();
             using var client = new System.Net.Http.HttpClient();
