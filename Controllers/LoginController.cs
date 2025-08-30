@@ -29,6 +29,12 @@ namespace GloboClimaFrontend.Controllers
             return View();
         }
 
+        [Route("Login/Login")]
+        public IActionResult LoginUserAlias()
+        {
+            return View("LoginUser");
+        }
+
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser(string username, string password)
         {
