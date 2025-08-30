@@ -17,8 +17,8 @@ namespace GloboClimaFrontend.Services
         public JwtService(IConfiguration configuration)
         {
             _baseUrl = configuration["GlobalClimaAPI_URL"];
-            _basicUsername = configuration["Jwt:Username"];
-            _basicPassword = configuration["Jwt:Password"];
+            _basicUsername = configuration["Jwt_Username"];
+            _basicPassword = configuration["Jwt_Password"];
         }
 
         public async Task<string> GetJwtTokenAsync(string userId)
