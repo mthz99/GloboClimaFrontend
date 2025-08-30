@@ -1,0 +1,98 @@
+@{
+    ViewData["Title"] = "GlobalClima";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+<style>
+    body, html {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        background: #18141d;
+    }
+    .gc-bg {
+        min-height: 100vh;
+        background: #18141d;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding-top: 2rem;
+    }
+    .gc-card {
+        background: #2a2236;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        padding: 2.5rem 2rem 2rem 2rem;
+        width: 95%;
+        max-width: 900px;
+        margin-top: 1rem;
+    }
+    .gc-title {
+        color: #a020f0;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 2.5rem;
+        text-align: center;
+        margin-bottom: 2.5rem;
+        letter-spacing: 2px;
+    }
+    .gc-label {
+        color: #a020f0;
+        font-weight: 500;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+    .gc-input {
+        background: #e6d6fa;
+        border: none;
+        border-radius: 3px;
+        padding: 0.4rem 0.8rem;
+        width: 100%;
+        font-size: 1rem;
+        color: #18141d;
+    }
+    .gc-btn {
+        background-color: #a020f0;
+        border: none;
+        color: #fff;
+        font-weight: 600;
+        padding: 0.5rem 1.2rem;
+        border-radius: 3px;
+        font-size: 1rem;
+        transition: background 0.2s;
+    }
+    .gc-btn:hover {
+        background-color: #7c3aed;
+    }
+    .gc-row {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+    }
+</style>
+
+<div class="gc-bg">
+    <div class="gc-card">
+        <div class="gc-title">GLOBAL CLIMA</div>
+        <form method="post">
+            <div class="gc-row">
+                <div style="flex:1;">
+                    <label for="username" class="gc-label">Username</label>
+                    <input type="text" class="gc-input" id="username" name="username" required />
+                </div>
+                <div style="flex:1;">
+                    <label for="password" class="gc-label">Senha</label>
+                    <input type="password" class="gc-input" id="password" name="password" required />
+                </div>
+                <div>
+                    <button type="submit" class="gc-btn">ENTRAR</button>
+                </div>
+            </div>
+        </form>
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger mt-3">@ViewBag.Error</div>
+        }
+    </div>
+</div>

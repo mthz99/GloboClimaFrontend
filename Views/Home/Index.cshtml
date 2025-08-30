@@ -1,0 +1,106 @@
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<link rel="stylesheet" href="~/css/gc-menu.css" />
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+<style>
+    .menu-logo {
+        font-family: 'Orbitron', sans-serif !important;
+    }
+    .menu-list a, .menu-favorites-title, .menu-favorites-list a {
+        font-family: 'Orbitron', sans-serif !important;
+        font-weight: 500;
+        border: 2px solid #a020f0;
+        background: #2a2236;
+        color: #fff;
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+        transition: background 0.2s, color 0.2s;
+        box-sizing: border-box;
+        padding: 0.6rem 1rem;
+        display: block;
+    }
+    .menu-list a:hover, .menu-favorites-list a:hover, .menu-favorites-title:hover {
+        background: #7c3aed;
+        color: #fff;
+    }
+    .menu-favorites-title {
+        border: 2px solid #a020f0;
+        background: #2a2236;
+        color: #fff;
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+        width: 100%;
+        text-align: left;
+        font-size: 1.1rem;
+        cursor: pointer;
+        padding: 0.6rem 1rem;
+        display: block;
+    }
+</style>
+<style>
+    body, html {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        background: #18141d;
+    }
+    .menu-container {
+        background: #18141d;
+    }
+</style>
+
+<div class="menu-container">
+    <nav class="menu-sidebar">
+        <div class="menu-logo">GloboClima</div>
+        <ul class="menu-list">
+            <li><a href="/Home/ConsultarClimaCidade">Consultar Clima Cidade</a></li>
+            <li><a href="/Consult/ConsultCountry">Consultar País</a></li>
+            <li class="menu-favorites">
+                <div class="menu-favorites-dropdown">
+                    <button class="menu-favorites-title" id="favorites-toggle">Favorites &#9662;</button>
+                    <ul class="menu-favorites-list" id="favorites-list" style="display:none;">
+                        <li><a href="/Favorites/Cidades">Cidades</a></li>
+                        <li><a href="/Favorites/Paises">Países</a></li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </nav>
+    <main style="flex:1; padding:2rem;">
+        @if (ViewBag.Form == "ConsultarClimaCidade")
+        {
+            <partial name="~/Views/Home/ConsultarClimaCidade.cshtml" />
+        }
+        else if (ViewBag.Form == "ConsultarPais")
+        {
+            <partial name="~/Views/Home/ConsultarPais.cshtml" />
+        }
+        else if (ViewBag.Form == "FavoritesCidades")
+        {
+            <partial name="~/Views/Home/FavoritesCidades.cshtml" />
+        }
+        else if (ViewBag.Form == "FavoritesPaises")
+        {
+            <partial name="~/Views/Home/FavoritesPaises.cshtml" />
+        }
+        else
+        {
+            <h2 style="color:#fff;">Bem-vindo ao GloboClima!</h2>
+            <p style="color:#fff;">Selecione uma opção no menu para começar.</p>
+        }
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var toggle = document.getElementById('favorites-toggle');
+            var list = document.getElementById('favorites-list');
+            var expanded = false;
+            toggle.addEventListener('click', function() {
+                expanded = !expanded;
+                list.style.display = expanded ? 'block' : 'none';
+                toggle.innerHTML = expanded ? 'Favorites &#9652;' : 'Favorites &#9662;';
+            });
+        });
+    </script>
+</div>

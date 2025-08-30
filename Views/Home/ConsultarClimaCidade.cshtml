@@ -1,0 +1,264 @@
+@{
+    ViewData["Title"] = "Consultar Clima Cidade";
+}
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+<style>
+    .gc-form-container {
+        margin: 2rem auto;
+        max-width: 500px;
+        background: #2a2236;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        padding: 2rem;
+    }
+
+    .gc-form-title {
+        color: #fff;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 2rem;
+        text-align: center;
+        margin-bottom: 2rem;
+        letter-spacing: 2px;
+    }
+
+    .gc-form-desc {
+        color: #fff;
+        font-size: 1rem;
+        text-align: center;
+        margin-bottom: 18px;
+        font-family: 'Orbitron', 'Segoe UI', sans-serif;
+    }
+
+    .gc-form-button {
+        background: linear-gradient(90deg, #a020f0 0%, #7c3aed 100%);
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 10px 0;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        width: 100%;
+        font-family: 'Orbitron', 'Segoe UI', sans-serif;
+        margin-bottom: 10px;
+    }
+
+    .gc-form-input {
+        width: 100%;
+        padding: 8px;
+        border-radius: 6px;
+        border: none;
+        background: #b18aff33;
+        color: #fff;
+        font-size: 1rem;
+        margin-bottom: 16px;
+        font-family: 'Orbitron', 'Segoe UI', sans-serif;
+    }
+
+    .gc-label {
+        color: #a020f0;
+        font-weight: 500;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .gc-form-label {
+        color: #d1c3f7;
+        font-size: 1.1rem;
+        margin-bottom: 6px;
+        font-family: 'Orbitron', 'Segoe UI', sans-serif;
+    }
+
+    .gc-input {
+        background: #e6d6fa;
+        border: none;
+        border-radius: 3px;
+        padding: 0.4rem 0.8rem;
+        width: 100%;
+        font-size: 1rem;
+        color: #18141d;
+        margin-bottom: 1.5rem;
+    }
+
+    .gc-btn {
+        background-color: #a020f0;
+        border: none;
+        color: #fff;
+        font-weight: 600;
+        padding: 0.5rem 1.2rem;
+        border-radius: 3px;
+        font-size: 1rem;
+        transition: background 0.2s;
+        width: 100%;
+    }
+
+    .gc-btn:hover {
+        background-color: #7c3aed;
+    }
+</style>
+<div class="gc-form-container">
+    <div class="gc-form-title">Consultar clima de uma cidade</div>
+    <div class="gc-form-desc">Preencha o nome da cidade e o código do país abaixo para consultar informações climáticas.</div>
+    <form method="post" action="/Consult/ConsultWeatherCity">
+        <label for="cidade" class="gc-form-label">Nome da Cidade</label>
+        <input type="text"  class="gc-form-input" id="cidade" name="cidade" placeholder="São Paulo" required />
+        <label for="codigoPais" class="gc-form-label">Código País</label>
+        <input type="text"  class="gc-form-input""codigoPais" name="codigoPais" placeholder="BR" required />
+        <button type="submit" class="gc-form-button">Consultar</button>
+    </form>
+    @if (ViewBag.CityNotFound == true)
+    {
+        <div style="margin-top:2rem; background:#2a2236; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.15); padding:2rem; max-width:700px; margin-left:auto; margin-right:auto; color:#fff; text-align:center;">
+            <img src="/font/bootstrap-icons-1.13.1/exclamation-triangle-fill.svg" alt="Cidade não encontrada" style="width:48px; height:48px; filter:invert(1); margin-bottom:1rem;" />
+            <div style="font-family:'Orbitron',sans-serif; font-size:1.5rem; color:#ff4c4c; margin-bottom:1rem;">Não foi encontrada essa cidade, tente novamente</div>
+        </div>
+    }
+    else if (ViewBag.WeatherResult != null)
+    {
+        var weatherJson = Newtonsoft.Json.Linq.JObject.Parse(ViewBag.WeatherResult);
+        var city = weatherJson["name"]?.ToString();
+        var cityId = weatherJson["id"]?.ToString();
+        var country = weatherJson["sys"]?["country"]?.ToString();
+        // Remover sysType e sysId
+        var sunrise = weatherJson["sys"]?["sunrise"]?.ToObject<long?>();
+        var sunset = weatherJson["sys"]?["sunset"]?.ToObject<long?>();
+        var timezone = weatherJson["timezone"]?.ToString();
+        var dt = weatherJson["dt"]?.ToString();
+        var lon = weatherJson["coord"]?["lon"]?.ToString();
+        var lat = weatherJson["coord"]?["lat"]?.ToString();
+        var weatherId = weatherJson["weather"]?[0]?["id"]?.ToString();
+        var mainCond = weatherJson["weather"]?[0]?["main"]?.ToString();
+        var description = weatherJson["weather"]?[0]?["description"]?.ToString();
+        var icon = weatherJson["weather"]?[0]?["icon"]?.ToString();
+        // Remover baseStation
+        var temp = weatherJson["main"]?["temp"]?.ToObject<double?>();
+        var feelsLike = weatherJson["main"]?["feels_like"]?.ToObject<double?>();
+        var tempMin = weatherJson["main"]?["temp_min"]?.ToObject<double?>();
+        var tempMax = weatherJson["main"]?["temp_max"]?.ToObject<double?>();
+        var pressure = weatherJson["main"]?["pressure"]?.ToString();
+        var seaLevel = weatherJson["main"]?["sea_level"]?.ToString();
+        var grndLevel = weatherJson["main"]?["grnd_level"]?.ToString();
+        var humidity = weatherJson["main"]?["humidity"]?.ToString();
+        var visibility = weatherJson["visibility"]?.ToString();
+        var windSpeed = weatherJson["wind"]?["speed"]?.ToObject<double?>();
+        var windDeg = weatherJson["wind"]?["deg"]?.ToString();
+        var cloudsAll = weatherJson["clouds"]?["all"]?.ToString();
+        var tempC = temp != null ? ((double)temp - 273.15).ToString("F1") : "-";
+        var feelsLikeC = feelsLike != null ? ((double)feelsLike - 273.15).ToString("F1") : "-";
+        var tempMinC = tempMin != null ? ((double)tempMin - 273.15).ToString("F1") : "-";
+        var tempMaxC = tempMax != null ? ((double)tempMax - 273.15).ToString("F1") : "-";
+        string FormatUnix(long? unix) => unix != null ?
+        System.DateTimeOffset.FromUnixTimeSeconds(unix.Value).ToLocalTime().ToString("dd/MM/yyyy HH:mm") : "-";
+        <div
+            style="margin-top:2rem; background:#2a2236; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.15); padding:2rem; max-width:700px; margin-left:auto; margin-right:auto; color:#fff;">
+            <div
+                style="font-family:'Orbitron',sans-serif; font-size:2rem; color:#a020f0; text-align:center; margin-bottom:1.5rem;">
+                @city (@country)</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem;">
+
+                <div>
+                    <!-- Localização -->
+                    <div>
+                        <img src="/font/bootstrap-icons-1.13.1/compass-fill.svg" alt="Localização"
+                            style="vertical-align:middle; width:24px; height:24px; margin-right:4px; filter:invert(1);" />
+                        <span style="font-size:1.3rem; font-weight:600;"><i class="bi bi-geo-alt-fill"
+                                style="vertical-align:middle; width:24px; height:24px; color:#fff;"></i>
+                            Localização</span><br />
+                        Longitude: @lon<br />
+                        Latitude: @lat
+                    </div>
+                    <div style="width:100%;height:10px;"></div>
+                    <!-- Data e horário -->
+                    <div>
+                        <img src="/font/bootstrap-icons-1.13.1/calendar2-week-fill.svg" alt="Data e horário"
+                            style="vertical-align:middle; width:24px; height:24px; margin-right:4px; filter:invert(1);" />
+                        <span style="font-size:1.3rem; font-weight:600;"><i class="bi bi-calendar-date"
+                                style="vertical-align:middle; width:24px; height:24px; color:#fff;"></i> Data e
+                            horário</span><br />
+                        @{
+                            // Converter dt para horário de Brasília
+                            long dtUnix;
+                            if (long.TryParse(dt?.ToString(), out dtUnix))
+                            {
+                                var dtBrasilia = System.DateTimeOffset.FromUnixTimeSeconds(dtUnix).ToOffset(TimeSpan.FromHours(-3));
+                                <text>@dtBrasilia.ToString("dd/MM/yyyy HH:mm")</text>
+                            }
+                            else
+                            {
+                                <text>-</text>
+                            }
+                        }
+                    </div>
+                </div>
+                <!-- Cidade -->
+                <div>
+                    <img src="/font/bootstrap-icons-1.13.1/buildings-fill.svg" alt="Cidade"
+                        style="vertical-align:middle; width:24px; height:24px; margin-right:4px; filter:invert(1);" />
+                    <span style="font-size:1.3rem; font-weight:600;"><i class="bi bi-building"
+                            style="vertical-align:middle; width:24px; height:24px; color:#fff;"></i> Cidade</span><br />
+                    ID da cidade: @cityId<br />
+                    Nome: @city<br />
+                    País: @country<br />
+                    Nascer do sol: @FormatUnix(sunrise)<br />
+                    Pôr do sol: @FormatUnix(sunset)
+                </div>
+
+                <!-- Fuso horário -->
+                <div>
+                    <img src="/font/bootstrap-icons-1.13.1/stopwatch-fill.svg" alt="Fuso horário"
+                        style="vertical-align:middle; width:24px; height:24px; margin-right:4px; filter:invert(1);" />
+                    <span style="font-size:1.3rem; font-weight:600;"><i class="bi bi-clock"
+                            style="vertical-align:middle; width:24px; height:24px; color:#fff;"></i> Fuso
+                        horário</span><br />
+                    Timezone: @timezone segundos (UTC-3)
+                </div>
+                <!-- Nuvens -->
+                <div>
+                    <img src="/font/bootstrap-icons-1.13.1/cloud-haze2-fill.svg" alt="Nuvens"
+                        style="vertical-align:middle; width:24px; height:24px; margin-right:4px; filter:invert(1);" />
+                    <span style="font-size:1.3rem; font-weight:600;"><i class="bi bi-cloud"
+                            style="vertical-align:middle; width:24px; height:24px; color:#fff;"></i> Nuvens</span><br />
+                    Cobertura: @cloudsAll %
+                </div>
+                <!-- Visibilidade -->
+                <div>
+                    <div>
+                        <img src="/font/bootstrap-icons-1.13.1/eye-fill.svg" alt="Visibilidade"
+                            style="vertical-align:middle; width:24px; height:24px; margin-right:4px; filter:invert(1);" />
+                        <span style="font-size:1.3rem; font-weight:600;"><i class="bi bi-eye"
+                                style="vertical-align:middle; width:24px; height:24px; color:#fff;"></i>
+                            Visibilidade</span><br />
+                        Visibilidade: @visibility m
+                    </div>
+                    <div style="width:100%;height:10px;"></div>
+                    <!-- Vento -->
+                    <div>
+                        <img src="/font/bootstrap-icons-1.13.1/wind.svg" alt="Vento"
+                            style="vertical-align:middle; width:24px; height:24px; margin-right:4px; filter:invert(1);" />
+                        <span style="font-size:1.3rem; font-weight:600;"><i class="bi bi-wind"
+                                style="vertical-align:middle; width:24px; height:24px; color:#fff;"></i> Vento</span><br />
+                        Velocidade: @windSpeed m/s<br />
+                        Direção: @windDeg°
+                    </div>
+                </div>
+                <!-- Clima + Dados principais -->
+                <div>
+                    <img src="/font/bootstrap-icons-1.13.1/cloud-drizzle-fill.svg" alt="Clima"
+                        style="vertical-align:middle; width:24px; height:24px; margin-right:4px; filter:invert(1);" />
+                    <span style="font-size:1.3rem; font-weight:600;"><i class="bi bi-cloud-fill"
+                            style="vertical-align:middle; width:24px; height:24px; color:#fff;"></i> Clima</span><br />
+                    Condição principal: @mainCond<br />
+                    Descrição: @description<br />
+                    Temperatura atual: @temp K (@tempC °C)<br />
+                    Sensação térmica: @feelsLike K (@feelsLikeC °C)<br />
+                    Temperatura mínima: @tempMin K (@tempMinC °C)<br />
+                    Temperatura máxima: @tempMax K (@tempMaxC °C)<br />
+                    Pressão atmosférica (nível do mar): @seaLevel hPa<br />
+                    Pressão ao nível do solo: @grndLevel hPa<br />
+                    Umidade: @humidity %
+                </div>
+            </div>
+        </div>
+    }
+</div>

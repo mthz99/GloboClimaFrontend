@@ -1,0 +1,133 @@
+/* gc-menu.css: Estilo para o menu lateral, responsivo e com paleta violeta */
+.menu-container {
+    display: flex;
+    min-height: 100vh;
+    background: #f6f3fa;
+}
+.menu-sidebar {
+    width: 260px;
+    background: linear-gradient(180deg, #7c3aed 0%, #a78bfa 100%);
+    color: #fff;
+    padding: 2rem 1rem;
+    box-shadow: 2px 0 8px rgba(124,58,237,0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+.menu-logo {
+    font-size: 1.7rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+    letter-spacing: 1px;
+}
+.menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex: 1;
+}
+.menu-list > li {
+    margin-bottom: 1.2rem;
+}
+.menu-list a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.1rem;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    display: block;
+    transition: background 0.2s;
+}
+.menu-list a:hover {
+    background: rgba(255,255,255,0.12);
+}
+/* Favorites como botão com contorno, opções internas dentro do mesmo contorno */
+/* Favorites como botão com contorno, opções internas dentro do mesmo botão */
+.menu-favorites {
+    margin-top: 2rem;
+    position: relative;
+}
+.menu-favorites-dropdown {
+    border: 2px solid #a020f0;
+    background: #2a2236;
+    border-radius: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+.menu-favorites-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    background: none;
+    color: #fff;
+    border: none;
+    border-radius: 8px 8px 0 0;
+    padding: 0.6rem 1rem;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    display: block;
+    transition: background 0.2s, color 0.2s;
+}
+.menu-favorites-title:hover {
+    background: #7c3aed;
+    color: #fff;
+}
+.menu-favorites-list {
+    list-style: none;
+    margin: 0;
+    padding: 0.5rem 0;
+    background: none;
+    width: 100%;
+}
+.menu-favorites-list li {
+    margin-bottom: 0.7rem;
+    padding: 0 1rem;
+}
+.menu-favorites-list a {
+    color: #e0e7ff;
+    font-size: 1rem;
+    text-decoration: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    display: block;
+    transition: background 0.2s;
+}
+.menu-favorites-list a:hover {
+    background: #7c3aed;
+    color: #fff;
+}
+@media (max-width: 900px) {
+    .menu-sidebar {
+        width: 180px;
+        padding: 1rem 0.5rem;
+    }
+    .menu-logo {
+        font-size: 1.2rem;
+    }
+}
+@media (max-width: 700px) {
+    .menu-container {
+        flex-direction: column;
+    }
+    .menu-sidebar {
+        width: 100%;
+        flex-direction: row;
+        gap: 1rem;
+        padding: 1rem 0.5rem;
+        box-shadow: none;
+        border-bottom: 2px solid #a78bfa;
+    }
+    .menu-list {
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+        flex: 1;
+    }
+    .menu-list > li {
+        margin-bottom: 0;
+    }
+    .menu-favorites {
+        display: none;
+    }
+}

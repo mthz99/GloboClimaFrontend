@@ -1,0 +1,141 @@
+@{
+    ViewData["Title"] = "Países Favoritos";
+}
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+<style>
+    .fav-grid-container {
+        margin: 2rem auto;
+        max-width: 800px;
+        background: #2a2236;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        padding: 2rem;
+        color: #fff;
+    }
+    .gc-form-title {
+        color: #fff;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 2rem;
+        text-align: center;
+        margin-bottom: 2rem;
+        letter-spacing: 2px;
+    }
+    .fav-title {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 2rem;
+        color: #a020f0;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    .fav-grid {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+    .fav-grid th, .fav-grid td {
+        border: 1px solid #a020f0;
+        padding: 0.8rem;
+        text-align: left;
+    }
+    .fav-grid th {
+        background: #7c3aed;
+        color: #fff;
+        font-family: 'Orbitron', sans-serif;
+    }
+    .fav-grid tr:nth-child(even) {
+        background: #baacdd;
+    }
+    .fav-grid tr:nth-child(odd) {
+        background: #7d6ca8;
+    }
+</style>
+<div class="fav-grid-container">
+    @if (TempData["Success"] != null)
+    {
+        <div style="background:#2a2236; color:#4fff7b; border:2px solid #4fff7b; border-radius:8px; padding:1rem; margin-bottom:1rem; text-align:center; font-family:'Orbitron',sans-serif; font-size:1.1rem;">
+            @TempData["Success"]
+        </div>
+        <script>
+            setTimeout(function(){ window.location.reload(); }, 1200);
+        </script>
+    }
+    else if (TempData["Error"] != null)
+    {
+        <div style="background:#2a2236; color:#ff4c4c; border:2px solid #ff4c4c; border-radius:8px; padding:1rem; margin-bottom:1rem; text-align:center; font-family:'Orbitron',sans-serif; font-size:1.1rem;">
+            @TempData["Error"]
+        </div>
+        <script>
+            setTimeout(function(){ window.location.reload(); }, 1800);
+        </script>
+    }
+    <div class="gc-form-title">Países Favoritos</div>
+    <table class="fav-grid">
+        <thead>
+            <tr>
+                <th>Nome do País</th>
+                <th>Código do País</th>
+                <th>Data de Criação</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (ViewBag.FavoriteCountries != null && ViewBag.FavoriteCountries.Count > 0)
+            {
+                foreach (var pais in ViewBag.FavoriteCountries)
+                {
+                    <tr>
+                        <td>@pais.Nome</td>
+                        <td>@pais.CodigoPais</td>
+                        <td>@pais.DataCriacao.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>
+                            <form method="post" action="/Favorites/ApagarPais" style="display:inline;">
+                                <input type="hidden" name="countryId" value="@pais.Id" />
+                                <button type="submit" style="background:#ff4c4c; color:#fff; border:none; border-radius:5px; padding:6px 12px; cursor:pointer; font-family:'Orbitron',sans-serif;">Apagar</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4" style="text-align:center; color:#ff4c4c;">Nenhum país favorito encontrado.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div style="margin-top:2rem; text-align:center;">
+        <button id="btnAddFavCountry" style="background:#7c3aed; color:#fff; border:none; border-radius:8px; padding:12px 24px; font-size:1.1rem; font-family:'Orbitron',sans-serif; cursor:pointer;">Adicionar País Favorito</button>
+    </div>
+    <div id="addFavCountryContainer" style="display:none; background:#2a2236; border:2px solid #7c3aed; border-radius:10px; padding:2rem; margin:2rem auto 0 auto; max-width:500px;">
+        <form method="post" action="/Favorites/AdicionarPais">
+            <div style="margin-bottom:1rem;">
+                <label for="countryName" style="color:#fff; font-family:'Orbitron',sans-serif;">Nome do País:</label><br />
+                <input type="text" id="countryName" name="countryName" placeholder="Exemplo: Brasil" style="width:100%; padding:8px; border-radius:5px; border:1px solid #7c3aed; margin-top:4px;" required />
+            </div>
+            <div style="margin-bottom:1rem;">
+                <label for="countryCode" style="color:#fff; font-family:'Orbitron',sans-serif;">Código:</label><br />
+                <input type="text" id="countryCode" name="countryCode" placeholder="Exemplo: BR" style="width:100%; padding:8px; border-radius:5px; border:1px solid #7c3aed; margin-top:4px;" required />
+            </div>
+            <button type="submit" style="background:#7c3aed; color:#fff; border:none; border-radius:5px; padding:10px 20px; font-family:'Orbitron',sans-serif; font-size:1rem; cursor:pointer;">Salvar</button>
+            <button type="button" id="btnCancelAddFavCountry" style="background:#444; color:#fff; border:none; border-radius:5px; padding:10px 20px; font-family:'Orbitron',sans-serif; font-size:1rem; margin-left:10px; cursor:pointer;">Cancelar</button>
+        </form>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var btnAdd = document.getElementById('btnAddFavCountry');
+            var container = document.getElementById('addFavCountryContainer');
+            var btnCancel = document.getElementById('btnCancelAddFavCountry');
+            if (btnAdd && container && btnCancel) {
+                btnAdd.onclick = function() {
+                    container.style.display = 'block';
+                    btnAdd.style.display = 'none';
+                };
+                btnCancel.onclick = function() {
+                    container.style.display = 'none';
+                    btnAdd.style.display = 'inline-block';
+                };
+            }
+        });
+    </script>
+</div>
