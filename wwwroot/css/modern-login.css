@@ -1,0 +1,113 @@
+/* CSS adicional para melhorias modernas no login */
+
+/* Melhorias para dispositivos móveis */
+@media (max-width: 480px) {
+    .gc-title {
+        font-size: 1.6rem;
+        letter-spacing: 1px;
+    }
+    
+    .gc-card {
+        margin: 0.5rem;
+        padding: 2rem 1rem;
+        border-radius: 15px;
+    }
+    
+    .gc-input {
+        padding: 0.8rem 0.8rem 0.8rem 2.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .gc-input-icon {
+        font-size: 1rem;
+        left: 0.8rem;
+    }
+}
+
+/* Estados de foco melhorados */
+.gc-form-group:focus-within .gc-label {
+    color: #c4b5fd;
+    transform: translateY(-2px);
+}
+
+/* Animação de typing para o título */
+.gc-title.typing {
+    overflow: hidden;
+    white-space: nowrap;
+    margin: 0 auto;
+    letter-spacing: 0.15em;
+    animation: typing 3.5s steps(13, end), blink-caret 0.75s step-end infinite;
+}
+
+@keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+}
+
+@keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: #a020f0 }
+}
+
+/* Efeito de glass morphism no modal */
+.error-modal-content {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+/* Animação de entrada suave para os elementos */
+.fade-in {
+    animation: fadeInUp 0.8s ease forwards;
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.fade-in.delay-1 { animation-delay: 0.2s; }
+.fade-in.delay-2 { animation-delay: 0.4s; }
+.fade-in.delay-3 { animation-delay: 0.6s; }
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Efeito de hover nos inputs */
+.gc-input:not(:focus):hover {
+    transform: translateY(-1px);
+    border-color: rgba(160, 32, 240, 0.4);
+}
+
+/* Melhor feedback visual para estados de carregamento */
+.gc-btn.loading .btn-text {
+    opacity: 0;
+}
+
+/* Efeito de partículas mais suave em telas menores */
+@media (max-width: 768px) {
+    .particle {
+        display: none;
+    }
+}
+
+/* Tooltip para campos de entrada */
+.gc-input-container::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: -25px;
+    left: 0;
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    z-index: 1000;
+}
+
+.gc-input:focus + .gc-input-container::before {
+    opacity: 1;
+}

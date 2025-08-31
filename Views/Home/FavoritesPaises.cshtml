@@ -1,141 +1,596 @@
 @{
     ViewData["Title"] = "Países Favoritos";
 }
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
 <style>
-    .fav-grid-container {
-        margin: 2rem auto;
-        max-width: 800px;
-        background: #2a2236;
-        border-radius: 10px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        padding: 2rem;
-        color: #fff;
-    }
-    .gc-form-title {
-        color: #fff;
-        font-family: 'Orbitron', sans-serif;
-        font-size: 2rem;
-        text-align: center;
-        margin-bottom: 2rem;
-        letter-spacing: 2px;
-    }
-    .fav-title {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 2rem;
-        color: #a020f0;
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-    .fav-grid {
+    /* Container principal com estilo moderno e mais largura */
+    .gc-favorites-container {
+        background: rgba(42, 34, 54, 0.8);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(160, 32, 240, 0.3);
+        border-radius: 20px;
+        padding: 2.5rem;
+        max-width: 90%;
         width: 100%;
-        border-collapse: collapse;
-        margin-top: 1rem;
+        margin: 0 auto;
+        box-shadow: 0 8px 32px rgba(160, 32, 240, 0.1);
+        position: relative;
+        overflow: hidden;
+        min-width: 320px;
     }
-    .fav-grid th, .fav-grid td {
-        border: 1px solid #a020f0;
-        padding: 0.8rem;
-        text-align: left;
+
+    .gc-favorites-container::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(160, 32, 240, 0.05) 0%, transparent 70%);
+        animation: rotate 30s linear infinite;
+        pointer-events: none;
     }
-    .fav-grid th {
-        background: #7c3aed;
-        color: #fff;
+
+    @@keyframes rotate {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .gc-favorites-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Título principal */
+    .gc-favorites-title {
         font-family: 'Orbitron', sans-serif;
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #ffffff;
+        text-align: center;
+        margin-bottom: 2.5rem;
+        background: linear-gradient(135deg, #a020f0, #7c3aed);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: 1px;
+        text-shadow: 0 0 20px rgba(160, 32, 240, 0.3);
     }
-    .fav-grid tr:nth-child(even) {
-        background: #baacdd;
+
+    /* Alertas de sucesso e erro modernizados */
+    .gc-alert {
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 2rem;
+        text-align: center;
+        font-family: 'Inter', sans-serif;
+        font-weight: 500;
+        font-size: 0.95rem;
+        border: 1px solid;
+        backdrop-filter: blur(10px);
+        animation: slideIn 0.5s ease-out;
     }
-    .fav-grid tr:nth-child(odd) {
-        background: #7d6ca8;
+
+    .gc-alert-success {
+        background: rgba(34, 197, 94, 0.1);
+        color: #4ade80;
+        border-color: rgba(34, 197, 94, 0.3);
+    }
+
+    .gc-alert-error {
+        background: rgba(239, 68, 68, 0.1);
+        color: #f87171;
+        border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    @@keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Container da tabela com melhor uso do espaço */
+    .gc-table-container {
+        background: rgba(42, 34, 54, 0.6);
+        border-radius: 16px;
+        padding: 1.8rem;
+        border: 1px solid rgba(160, 32, 240, 0.2);
+        margin-bottom: 2rem;
+        overflow-x: auto;
+        box-shadow: 0 4px 20px rgba(160, 32, 240, 0.05);
+    }
+
+    /* Tabela modernizada com melhor espaçamento */
+    .gc-favorites-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        border-radius: 12px;
+        overflow: hidden;
+        background: rgba(42, 34, 54, 0.8);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        min-width: 700px;
+    }
+
+    .gc-favorites-table th {
+        background: linear-gradient(135deg, #a020f0, #7c3aed);
+        color: #ffffff;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 1rem;
+        padding: 1.5rem 1.2rem;
+        text-align: left;
+        letter-spacing: 0.5px;
+        border: none;
+        position: relative;
+    }
+
+    .gc-favorites-table th:first-child {
+        border-top-left-radius: 12px;
+        width: 35%;
+    }
+
+    .gc-favorites-table th:nth-child(2) {
+        width: 20%;
+    }
+
+    .gc-favorites-table th:nth-child(3) {
+        width: 25%;
+    }
+
+    .gc-favorites-table th:last-child {
+        border-top-right-radius: 12px;
+        width: 20%;
+        text-align: center;
+    }
+
+    .gc-favorites-table td {
+        padding: 1.2rem 1.2rem;
+        border-bottom: 1px solid rgba(160, 32, 240, 0.1);
+        color: #e2e8f0;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.95rem;
+        transition: background-color 0.3s ease;
+        vertical-align: middle;
+    }
+
+    .gc-favorites-table td:last-child {
+        text-align: center;
+    }
+
+    .gc-favorites-table tr:hover td {
+        background: rgba(160, 32, 240, 0.1);
+    }
+
+    .gc-favorites-table tr:nth-child(even) td {
+        background: rgba(42, 34, 54, 0.5);
+    }
+
+    .gc-favorites-table tr:nth-child(odd) td {
+        background: rgba(42, 34, 54, 0.3);
+    }
+
+    /* Célula de "nenhum resultado" */
+    .gc-no-results {
+        text-align: center;
+        color: #94a3b8;
+        font-style: italic;
+        padding: 2rem;
+    }
+
+    /* Botão de ação principal */
+    .gc-btn-primary {
+        background: linear-gradient(135deg, #a020f0, #7c3aed);
+        color: #ffffff;
+        border: none;
+        border-radius: 12px;
+        padding: 1rem 2rem;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 15px rgba(160, 32, 240, 0.3);
+        border: 1px solid rgba(160, 32, 240, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .gc-btn-primary::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .gc-btn-primary:hover::before {
+        left: 100%;
+    }
+
+    .gc-btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(160, 32, 240, 0.4);
+        border-color: #a020f0;
+    }
+
+    .gc-btn-primary:active {
+        transform: translateY(0);
+    }
+
+    /* Botão de apagar */
+    .gc-btn-delete {
+        background: rgba(239, 68, 68, 0.1);
+        color: #f87171;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        font-family: 'Inter', sans-serif;
+        font-weight: 500;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .gc-btn-delete:hover {
+        background: rgba(239, 68, 68, 0.2);
+        border-color: #f87171;
+        color: #ffffff;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+    }
+
+    /* Área de botões */
+    .gc-action-area {
+        text-align: center;
+        margin-top: 2rem;
+    }
+
+    /* Container do formulário de adicionar */
+    .gc-form-container {
+        background: rgba(42, 34, 54, 0.9);
+        border: 1px solid rgba(160, 32, 240, 0.4);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-top: 2rem;
+        backdrop-filter: blur(10px);
+        animation: slideIn 0.5s ease-out;
+    }
+
+    .gc-form-title {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #ffffff;
+        text-align: center;
+        margin-bottom: 2rem;
+        background: linear-gradient(135deg, #a020f0, #7c3aed);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .gc-form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .gc-form-label {
+        display: block;
+        font-family: 'Inter', sans-serif;
+        font-weight: 500;
+        color: #e2e8f0;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .gc-form-input {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 1px solid rgba(160, 32, 240, 0.3);
+        border-radius: 8px;
+        background: rgba(42, 34, 54, 0.6);
+        color: #ffffff;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+    }
+
+    .gc-form-input:focus {
+        outline: none;
+        border-color: #a020f0;
+        box-shadow: 0 0 0 3px rgba(160, 32, 240, 0.1);
+        background: rgba(42, 34, 54, 0.8);
+    }
+
+    .gc-form-input::placeholder {
+        color: #94a3b8;
+    }
+
+    .gc-form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+
+    .gc-btn-secondary {
+        background: rgba(71, 85, 105, 0.8);
+        color: #e2e8f0;
+        border: 1px solid rgba(71, 85, 105, 0.5);
+        border-radius: 8px;
+        padding: 0.8rem 1.5rem;
+        font-family: 'Inter', sans-serif;
+        font-weight: 500;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .gc-btn-secondary:hover {
+        background: rgba(71, 85, 105, 1);
+        border-color: #64748b;
+        transform: translateY(-1px);
+    }
+
+    /* Responsividade aprimorada */
+    @@media (min-width: 1400px) {
+        .gc-favorites-container {
+            max-width: 85%;
+            padding: 3rem;
+        }
+        
+        .gc-favorites-title {
+            font-size: 2.5rem;
+        }
+    }
+
+    @@media (min-width: 1200px) and (max-width: 1399px) {
+        .gc-favorites-container {
+            max-width: 88%;
+            padding: 2.8rem;
+        }
+    }
+
+    @@media (min-width: 992px) and (max-width: 1199px) {
+        .gc-favorites-container {
+            max-width: 92%;
+            padding: 2.5rem;
+        }
+    }
+
+    @@media (max-width: 991px) {
+        .gc-favorites-container {
+            max-width: 95%;
+            padding: 2rem;
+            margin: 1rem auto;
+        }
+        
+        .gc-favorites-title {
+            font-size: 2rem;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .gc-favorites-container {
+            max-width: 98%;
+            padding: 1.5rem;
+            margin: 0.5rem auto;
+        }
+
+        .gc-favorites-title {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+        }
+
+        .gc-table-container {
+            padding: 1rem;
+            border-radius: 12px;
+        }
+
+        .gc-favorites-table th,
+        .gc-favorites-table td {
+            padding: 0.8rem 0.6rem;
+            font-size: 0.85rem;
+        }
+
+        .gc-form-actions {
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .gc-btn-primary,
+        .gc-btn-secondary {
+            width: 100%;
+            padding: 1rem;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .gc-favorites-container {
+            max-width: 100%;
+            padding: 1rem;
+            margin: 0;
+            border-radius: 15px;
+        }
+
+        .gc-favorites-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .gc-table-container {
+            padding: 0.8rem;
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+
+        .gc-favorites-table {
+            min-width: 500px;
+            font-size: 0.75rem;
+        }
+
+        .gc-favorites-table th,
+        .gc-favorites-table td {
+            padding: 0.6rem 0.4rem;
+            white-space: nowrap;
+        }
+
+        .gc-form-container {
+            padding: 1.5rem;
+            border-radius: 12px;
+        }
     }
 </style>
-<div class="fav-grid-container">
-    @if (TempData["Success"] != null)
-    {
-        <div style="background:#2a2236; color:#4fff7b; border:2px solid #4fff7b; border-radius:8px; padding:1rem; margin-bottom:1rem; text-align:center; font-family:'Orbitron',sans-serif; font-size:1.1rem;">
-            @TempData["Success"]
-        </div>
+<div class="gc-favorites-container">
+    <div class="gc-favorites-content">
         <script>
-            setTimeout(function(){ window.location.reload(); }, 1200);
-        </script>
-    }
-    else if (TempData["Error"] != null)
-    {
-        <div style="background:#2a2236; color:#ff4c4c; border:2px solid #ff4c4c; border-radius:8px; padding:1rem; margin-bottom:1rem; text-align:center; font-family:'Orbitron',sans-serif; font-size:1.1rem;">
-            @TempData["Error"]
-        </div>
-        <script>
-            setTimeout(function(){ window.location.reload(); }, 1800);
-        </script>
-    }
-    <div class="gc-form-title">Países Favoritos</div>
-    <table class="fav-grid">
-        <thead>
-            <tr>
-                <th>Nome do País</th>
-                <th>Código do País</th>
-                <th>Data de Criação</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (ViewBag.FavoriteCountries != null && ViewBag.FavoriteCountries.Count > 0)
-            {
-                foreach (var pais in ViewBag.FavoriteCountries)
-                {
-                    <tr>
-                        <td>@pais.Nome</td>
-                        <td>@pais.CodigoPais</td>
-                        <td>@pais.DataCriacao.ToString("dd/MM/yyyy HH:mm")</td>
-                        <td>
-                            <form method="post" action="/Favorites/ApagarPais" style="display:inline;">
-                                <input type="hidden" name="countryId" value="@pais.Id" />
-                                <button type="submit" style="background:#ff4c4c; color:#fff; border:none; border-radius:5px; padding:6px 12px; cursor:pointer; font-family:'Orbitron',sans-serif;">Apagar</button>
-                            </form>
-                        </td>
-                    </tr>
+            document.addEventListener('DOMContentLoaded', function() {
+                var btnAdd = document.getElementById('btnAddFavCountry');
+                var container = document.getElementById('addFavCountryContainer');
+                var btnCancel = document.getElementById('btnCancelAddFavCountry');
+                
+                if (btnAdd && container && btnCancel) {
+                    btnAdd.onclick = function() {
+                        container.style.display = 'block';
+                        btnAdd.style.display = 'none';
+                        container.scrollIntoView({ behavior: 'smooth' });
+                    };
+                    
+                    btnCancel.onclick = function() {
+                        container.style.display = 'none';
+                        btnAdd.style.display = 'inline-block';
+                    };
                 }
-            }
-            else
-            {
-                <tr>
-                    <td colspan="4" style="text-align:center; color:#ff4c4c;">Nenhum país favorito encontrado.</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-    <div style="margin-top:2rem; text-align:center;">
-        <button id="btnAddFavCountry" style="background:#7c3aed; color:#fff; border:none; border-radius:8px; padding:12px 24px; font-size:1.1rem; font-family:'Orbitron',sans-serif; cursor:pointer;">Adicionar País Favorito</button>
-    </div>
-    <div id="addFavCountryContainer" style="display:none; background:#2a2236; border:2px solid #7c3aed; border-radius:10px; padding:2rem; margin:2rem auto 0 auto; max-width:500px;">
-        <form method="post" action="/Favorites/AdicionarPais">
-            <div style="margin-bottom:1rem;">
-                <label for="countryName" style="color:#fff; font-family:'Orbitron',sans-serif;">Nome do País:</label><br />
-                <input type="text" id="countryName" name="countryName" placeholder="Exemplo: Brasil" style="width:100%; padding:8px; border-radius:5px; border:1px solid #7c3aed; margin-top:4px;" required />
+            });
+        </script>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="gc-alert gc-alert-success">
+                <i class="fas fa-check-circle"></i> @TempData["Success"]
             </div>
-            <div style="margin-bottom:1rem;">
-                <label for="countryCode" style="color:#fff; font-family:'Orbitron',sans-serif;">Código:</label><br />
-                <input type="text" id="countryCode" name="countryCode" placeholder="Exemplo: BR" style="width:100%; padding:8px; border-radius:5px; border:1px solid #7c3aed; margin-top:4px;" required />
+            <script>
+                setTimeout(function(){ window.location.reload(); }, 1200);
+            </script>
+        }
+        else if (TempData["Error"] != null)
+        {
+            <div class="gc-alert gc-alert-error">
+                <i class="fas fa-exclamation-circle"></i> @TempData["Error"]
             </div>
-            <button type="submit" style="background:#7c3aed; color:#fff; border:none; border-radius:5px; padding:10px 20px; font-family:'Orbitron',sans-serif; font-size:1rem; cursor:pointer;">Salvar</button>
-            <button type="button" id="btnCancelAddFavCountry" style="background:#444; color:#fff; border:none; border-radius:5px; padding:10px 20px; font-family:'Orbitron',sans-serif; font-size:1rem; margin-left:10px; cursor:pointer;">Cancelar</button>
-        </form>
+            <script>
+                setTimeout(function(){ window.location.reload(); }, 1800);
+            </script>
+        }
+
+        <h1 class="gc-favorites-title">
+            <i class="fas fa-flag"></i> Países Favoritos
+        </h1>
+
+        <div class="gc-table-container">
+            <table class="gc-favorites-table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-globe"></i> Nome do País</th>
+                        <th><i class="fas fa-code"></i> Código do País</th>
+                        <th><i class="fas fa-calendar"></i> Data de Criação</th>
+                        <th><i class="fas fa-cogs"></i> Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.FavoriteCountries != null && ViewBag.FavoriteCountries.Count > 0)
+                    {
+                        foreach (var pais in ViewBag.FavoriteCountries)
+                        {
+                            <tr>
+                                <td>@pais.Nome</td>
+                                <td>@pais.CodigoPais</td>
+                                <td>@pais.DataCriacao.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>
+                                    <form method="post" action="/Favorites/ApagarPais" style="display:inline;">
+                                        <input type="hidden" name="countryId" value="@pais.Id" />
+                                        <button type="submit" class="gc-btn-delete">
+                                            <i class="fas fa-trash"></i> Apagar
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="gc-no-results">
+                                <i class="fas fa-heart-broken"></i><br>
+                                Nenhum país favorito encontrado.<br>
+                                <small>Adicione seus países favoritos para acessá-los rapidamente!</small>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="gc-action-area">
+            <button id="btnAddFavCountry" class="gc-btn-primary">
+                <i class="fas fa-plus"></i> Adicionar País Favorito
+            </button>
+        </div>
+
+        <div id="addFavCountryContainer" class="gc-form-container" style="display:none;">
+            <h2 class="gc-form-title">
+                <i class="fas fa-flag"></i> Novo País Favorito
+            </h2>
+            
+            <form method="post" action="/Favorites/AdicionarPais">
+                <div class="gc-form-group">
+                    <label for="countryName" class="gc-form-label">
+                        <i class="fas fa-globe"></i> Nome do país:
+                    </label>
+                    <input type="text" 
+                           id="countryName" 
+                           name="countryName" 
+                           class="gc-form-input"
+                           placeholder="Ex: Brasil, Estados Unidos, França..." 
+                           required />
+                </div>
+
+                <div class="gc-form-group">
+                    <label for="countryCode" class="gc-form-label">
+                        <i class="fas fa-code"></i> Código do País:
+                    </label>
+                    <input type="text" 
+                           id="countryCode" 
+                           name="countryCode" 
+                           class="gc-form-input"
+                           placeholder="Ex: BR (Brasil), US (Estados Unidos), FR (França)..." 
+                           maxlength="2"
+                           pattern="[A-Za-z]{2}"
+                           title="Digite o código de 2 letras do país"
+                           required />
+                </div>
+
+                <div class="gc-form-actions">
+                    <button type="submit" class="gc-btn-primary">
+                        <i class="fas fa-save"></i> Salvar
+                    </button>
+                    <button type="button" id="btnCancelAddFavCountry" class="gc-btn-secondary">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var btnAdd = document.getElementById('btnAddFavCountry');
-            var container = document.getElementById('addFavCountryContainer');
-            var btnCancel = document.getElementById('btnCancelAddFavCountry');
-            if (btnAdd && container && btnCancel) {
-                btnAdd.onclick = function() {
-                    container.style.display = 'block';
-                    btnAdd.style.display = 'none';
-                };
-                btnCancel.onclick = function() {
-                    container.style.display = 'none';
-                    btnAdd.style.display = 'inline-block';
-                };
-            }
-        });
-    </script>
 </div>

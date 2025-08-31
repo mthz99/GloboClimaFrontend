@@ -1,98 +1,481 @@
 @{
-    ViewData["Title"] = "GlobalClima";
+    ViewData["Title"] = "GlobalClima - Login";
 }
 
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
 <style>
     body, html {
         height: 100%;
         margin: 0;
         padding: 0;
-        background: #18141d;
+        background: linear-gradient(135deg, #0f0c1a 0%, #18141d 30%, #2a1b3d 100%);
+        font-family: 'Inter', sans-serif;
+        overflow: hidden;
     }
+
+    /* Animação de fundo com partículas */
+    .particles {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .particle {
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        background: #a020f0;
+        border-radius: 50%;
+        animation: float 20s infinite linear;
+        opacity: 0.6;
+    }
+
+    @@keyframes float {
+        0% {
+            transform: translateY(100vh) translateX(0px);
+            opacity: 0;
+        }
+        10% {
+            opacity: 0.6;
+        }
+        90% {
+            opacity: 0.6;
+        }
+        100% {
+            transform: translateY(-100px) translateX(100px);
+            opacity: 0;
+        }
+    }
+
     .gc-bg {
         min-height: 100vh;
-        background: #18141d;
         display: flex;
-        align-items: flex-start;
+        align-items: center;
         justify-content: center;
-        padding-top: 2rem;
+        padding: 2rem;
+        position: relative;
+        z-index: 10;
     }
+
     .gc-card {
-        background: #2a2236;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        padding: 2.5rem 2rem 2rem 2rem;
-        width: 95%;
-        max-width: 900px;
-        margin-top: 1rem;
+        background: rgba(42, 34, 54, 0.95);
+        border-radius: 20px;
+        box-shadow: 
+            0 25px 50px rgba(0,0,0,0.25),
+            0 0 0 1px rgba(160, 32, 240, 0.1),
+            inset 0 1px 0 rgba(255,255,255,0.1);
+        padding: 3rem 2.5rem;
+        width: 100%;
+        max-width: 450px;
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(160, 32, 240, 0.2);
+        position: relative;
+        overflow: hidden;
     }
+
+    .gc-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #a020f0, transparent);
+        animation: shimmer 3s infinite;
+    }
+
+    @@keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+
     .gc-title {
         color: #a020f0;
         font-family: 'Orbitron', sans-serif;
-        font-size: 2.5rem;
+        font-size: 2.2rem;
+        font-weight: 900;
+        text-align: center;
+        margin-bottom: 2rem;
+        letter-spacing: 3px;
+        text-shadow: 0 0 20px rgba(160, 32, 240, 0.3);
+        position: relative;
+    }
+
+    .gc-subtitle {
+        color: #c4b5fd;
         text-align: center;
         margin-bottom: 2.5rem;
-        letter-spacing: 2px;
+        font-size: 0.95rem;
+        opacity: 0.8;
     }
-    .gc-label {
+
+    .gc-form-group {
+        margin-bottom: 1.8rem;
+        position: relative;
+    }
+
+    .gc-input-container {
+        position: relative;
+    }
+
+    .gc-input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
         color: #a020f0;
-        font-weight: 500;
         font-size: 1.1rem;
-        margin-bottom: 0.5rem;
+        z-index: 2;
     }
+
+    .gc-label {
+        color: #e0e7ff;
+        font-weight: 500;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+        display: block;
+        transition: color 0.3s ease;
+    }
+
     .gc-input {
-        background: #e6d6fa;
-        border: none;
-        border-radius: 3px;
-        padding: 0.4rem 0.8rem;
+        background: rgba(230, 214, 250, 0.1);
+        border: 2px solid rgba(160, 32, 240, 0.2);
+        border-radius: 12px;
+        padding: 1rem 1rem 1rem 3rem;
         width: 100%;
         font-size: 1rem;
-        color: #18141d;
+        color: #fff;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+        box-sizing: border-box;
     }
+
+    .gc-input:focus {
+        outline: none;
+        border-color: #a020f0;
+        background: rgba(230, 214, 250, 0.15);
+        box-shadow: 0 0 0 3px rgba(160, 32, 240, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .gc-input:focus + .gc-input-icon {
+        color: #c4b5fd;
+    }
+
+    .gc-input::placeholder {
+        color: rgba(196, 181, 253, 0.5);
+    }
+
     .gc-btn {
-        background-color: #a020f0;
+        background: linear-gradient(135deg, #a020f0 0%, #7c3aed 100%);
         border: none;
         color: #fff;
         font-weight: 600;
-        padding: 0.5rem 1.2rem;
-        border-radius: 3px;
+        padding: 1rem 2rem;
+        border-radius: 12px;
         font-size: 1rem;
-        transition: background 0.2s;
+        width: 100%;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-top: 1rem;
     }
+
     .gc-btn:hover {
-        background-color: #7c3aed;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(160, 32, 240, 0.3);
     }
-    .gc-row {
+
+    .gc-btn:active {
+        transform: translateY(0);
+    }
+
+    .gc-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .gc-btn:hover::before {
+        left: 100%;
+    }
+
+    /* Modal de erro moderno */
+    .error-modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.7);
+        backdrop-filter: blur(5px);
+        animation: fadeIn 0.3s ease;
+    }
+
+    .error-modal-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: linear-gradient(135deg, #2a1b3d 0%, #1e1b3a 100%);
+        border-radius: 20px;
+        padding: 2rem;
+        max-width: 400px;
+        width: 90%;
+        box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+        border: 1px solid rgba(160, 32, 240, 0.3);
+        animation: slideIn 0.3s ease;
+    }
+
+    @@keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @@keyframes slideIn {
+        from { 
+            opacity: 0;
+            transform: translate(-50%, -60%);
+        }
+        to { 
+            opacity: 1;
+            transform: translate(-50%, -50%);
+        }
+    }
+
+    .error-modal-header {
         display: flex;
         align-items: center;
-        gap: 2rem;
-        justify-content: center;
+        margin-bottom: 1rem;
+    }
+
+    .error-modal-icon {
+        color: #ef4444;
+        font-size: 1.5rem;
+        margin-right: 0.75rem;
+    }
+
+    .error-modal-title {
+        color: #fff;
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .error-modal-message {
+        color: #c4b5fd;
         margin-bottom: 1.5rem;
+        line-height: 1.5;
+    }
+
+    .error-modal-close {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        border: none;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 500;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .error-modal-close:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+    }
+
+    /* Responsividade */
+    @@media (max-width: 768px) {
+        .gc-card {
+            margin: 1rem;
+            padding: 2rem 1.5rem;
+        }
+        
+        .gc-title {
+            font-size: 1.8rem;
+            letter-spacing: 2px;
+        }
+
+        .particles {
+            display: none;
+        }
+    }
+
+    .gc-btn.loading {
+        pointer-events: none;
+        opacity: 0.7;
+    }
+
+    .gc-btn.loading::after {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        margin: auto;
+        border: 2px solid transparent;
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 1s ease infinite;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    @@keyframes spin {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
     }
 </style>
+
+<!-- Partículas animadas de fundo -->
+<div class="particles">
+    <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+    <div class="particle" style="left: 20%; animation-delay: 2s;"></div>
+    <div class="particle" style="left: 30%; animation-delay: 4s;"></div>
+    <div class="particle" style="left: 40%; animation-delay: 6s;"></div>
+    <div class="particle" style="left: 50%; animation-delay: 8s;"></div>
+    <div class="particle" style="left: 60%; animation-delay: 10s;"></div>
+    <div class="particle" style="left: 70%; animation-delay: 12s;"></div>
+    <div class="particle" style="left: 80%; animation-delay: 14s;"></div>
+    <div class="particle" style="left: 90%; animation-delay: 16s;"></div>
+</div>
 
 <div class="gc-bg">
     <div class="gc-card">
         <div class="gc-title">GLOBAL CLIMA</div>
-        <form method="post">
-            <div class="gc-row">
-                <div style="flex:1;">
-                    <label for="username" class="gc-label">Username</label>
-                    <input type="text" class="gc-input" id="username" name="username" required />
-                </div>
-                <div style="flex:1;">
-                    <label for="password" class="gc-label">Senha</label>
-                    <input type="password" class="gc-input" id="password" name="password" required />
-                </div>
-                <div>
-                    <button type="submit" class="gc-btn">ENTRAR</button>
+        <div class="gc-subtitle">Acesse sua conta para continuar</div>
+        
+        <form id="loginForm" method="post" action="/login">
+            <div class="gc-form-group">
+                <label for="username" class="gc-label">Nome de usuário</label>
+                <div class="gc-input-container">
+                    <i class="fas fa-user gc-input-icon"></i>
+                    <input type="text" class="gc-input" id="username" name="username" 
+                           placeholder="Digite seu usuário" required />
                 </div>
             </div>
+
+            <div class="gc-form-group">
+                <label for="password" class="gc-label">Senha</label>
+                <div class="gc-input-container">
+                    <i class="fas fa-lock gc-input-icon"></i>
+                    <input type="password" class="gc-input" id="password" name="password" 
+                           placeholder="Digite sua senha" required />
+                </div>
+            </div>
+
+            <button type="submit" class="gc-btn" id="loginBtn">
+                <span id="btnText">Entrar</span>
+            </button>
         </form>
-        @if (ViewBag.Error != null)
-        {
-            <div class="alert alert-danger mt-3">@ViewBag.Error</div>
-        }
     </div>
 </div>
+
+<!-- Modal de erro -->
+<div id="errorModal" class="error-modal">
+    <div class="error-modal-content">
+        <div class="error-modal-header">
+            <i class="fas fa-exclamation-triangle error-modal-icon"></i>
+            <h3 class="error-modal-title">Erro de Autenticação</h3>
+        </div>
+        <p class="error-modal-message" id="errorMessage">
+            Usuário ou senha inválidos. Verifique suas credenciais e tente novamente.
+        </p>
+        <button class="error-modal-close" onclick="closeErrorModal()">
+            Tentar Novamente
+        </button>
+    </div>
+</div>
+
+<script>
+    // Mostrar modal de erro se houver erro no ViewBag
+    @if (ViewBag.Error != null)
+    {
+        <text>
+        document.addEventListener('DOMContentLoaded', function() {
+            showErrorModal('@ViewBag.Error');
+        });
+        </text>
+    }
+
+    function showErrorModal(message) {
+        document.getElementById('errorMessage').textContent = message;
+        document.getElementById('errorModal').style.display = 'block';
+        
+        // Shake animation no card
+        const card = document.querySelector('.gc-card');
+        card.style.animation = 'shake 0.5s ease-in-out';
+        setTimeout(() => {
+            card.style.animation = '';
+        }, 500);
+    }
+
+    function closeErrorModal() {
+        document.getElementById('errorModal').style.display = 'none';
+    }
+
+    // Fechar modal clicando fora dele
+    window.onclick = function(event) {
+        const modal = document.getElementById('errorModal');
+        if (event.target === modal) {
+            closeErrorModal();
+        }
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', function() {
+        const btn = document.getElementById('loginBtn');
+        const btnText = document.getElementById('btnText');
+        
+        btn.classList.add('loading');
+        btnText.textContent = 'Entrando...';
+        
+        // NÃO desabilitar os campos - isso impede o envio dos dados!
+        // document.getElementById('username').disabled = true;
+        // document.getElementById('password').disabled = true;
+    });
+
+    // Animação de shake para erro
+    const shakeKeyframes = `
+        @@keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+    `;
+    
+    const style = document.createElement('style');
+    style.textContent = shakeKeyframes;
+    document.head.appendChild(style);
+
+    // Animação de entrada dos inputs
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputs = document.querySelectorAll('.gc-input');
+        inputs.forEach((input, index) => {
+            input.style.opacity = '0';
+            input.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                input.style.transition = 'all 0.5s ease';
+                input.style.opacity = '1';
+                input.style.transform = 'translateY(0)';
+            }, 300 + (index * 100));
+        });
+    });
+</script>

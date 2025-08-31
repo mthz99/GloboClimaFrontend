@@ -24,64 +24,104 @@ namespace GloboClimaFrontend.Controllers
         }
 
         [Route("login")]
-        public IActionResult LoginUser()
+        public IActionResult LoginUserGet()
         {
-            return View();
+            return View("LoginUser");
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser(string username, string password)
         {
-            using var client = new HttpClient();
-            var basicAuth = Convert.ToBase64String(
-                System.Text.Encoding.UTF8.GetBytes($"{_basicUsername}:{_basicPassword}")
-            );
-            client.DefaultRequestHeaders.Authorization =
-                new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", basicAuth);
-
-            // Criptografar username e password usando SHA256
-            string EncryptSha256(string input)
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
-                using (var sha256 = System.Security.Cryptography.SHA256.Create())
+                ViewBag.Error = "Usuario e senha sao obrigatorios.";
+                return View();
+            }
+
+            if (string.IsNullOrEmpty(_baseUrl) || string.IsNullOrEmpty(_basicUsername) || string.IsNullOrEmpty(_basicPassword))
+            {
+                ViewBag.Error = "Erro de configuracao do sistema.";
+                return View();
+            }
+
+            try
+            {
+                using var client = new HttpClient();
+                var basicAuth = Convert.ToBase64String(
+                    System.Text.Encoding.UTF8.GetBytes($"{_basicUsername}:{_basicPassword}")
+                );
+                client.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", basicAuth);
+
+                // Criptografar username e password usando SHA256
+                string EncryptSha256(string input)
                 {
-                    var bytes = System.Text.Encoding.UTF8.GetBytes(input);
-                    var hash = sha256.ComputeHash(bytes);
-                    return string.Concat(hash.Select(b => b.ToString("x2")));
+                    if (string.IsNullOrWhiteSpace(input))
+                        return string.Empty;
+                        
+                    using (var sha256 = System.Security.Cryptography.SHA256.Create())
+                    {
+                        var bytes = System.Text.Encoding.UTF8.GetBytes(input.Trim());
+                        var hash = sha256.ComputeHash(bytes);
+                        return string.Concat(hash.Select(b => b.ToString("x2")));
+                    }
+                }
+
+                var encryptedUsername = EncryptSha256(username);
+                var encryptedPassword = EncryptSha256(password);
+
+                var url = $"{_baseUrl}/api/auth/LoginUser?username={encryptedUsername}&password={encryptedPassword}";
+                var response = await client.GetAsync(url);
+
+                switch (response.StatusCode)
+                {
+                    case System.Net.HttpStatusCode.OK:
+                        var json = await response.Content.ReadAsStringAsync();
+                        var userId = Newtonsoft.Json.Linq.JObject.Parse(json)["userId"]?.ToString();
+                        var userCredentials = Newtonsoft.Json.Linq.JObject.Parse(json)["username"]?.ToString();
+                        var passwordCredentials = Newtonsoft.Json.Linq.JObject.Parse(json)["password"]?.ToString();
+
+                        if (!string.IsNullOrEmpty(userId))
+                        {
+                            HttpContext.Session.SetString("UserId", userId);
+                            if (!string.IsNullOrEmpty(userCredentials))
+                                HttpContext.Session.SetString("userCredentials", userCredentials);
+                            if (!string.IsNullOrEmpty(passwordCredentials))
+                                HttpContext.Session.SetString("passwordCredentials", passwordCredentials);
+                        }
+                        return RedirectToAction("Index", "Home");
+                    case System.Net.HttpStatusCode.Unauthorized:
+                        ViewBag.Error = "Usuario ou senha invalidos.";
+                        return View();
+                    case System.Net.HttpStatusCode.InternalServerError:
+                        ViewBag.Error = "Erro interno do servidor.";
+                        return View();
+                    default:
+                        ViewBag.Error = "Erro inesperado.";
+                        return View();
                 }
             }
-
-            var encryptedUsername = EncryptSha256(username);
-            var encryptedPassword = EncryptSha256(password);
-
-            var url = $"{_baseUrl}/api/auth/LoginUser?username={encryptedUsername}&password={encryptedPassword}";
-            var response = await client.GetAsync(url);
-
-            switch (response.StatusCode)
+            catch (HttpRequestException)
             {
-                case System.Net.HttpStatusCode.OK:
-                    // Autenticado com sucesso
-                    var json = await response.Content.ReadAsStringAsync();
-                    var userId = Newtonsoft.Json.Linq.JObject.Parse(json)["userId"]?.ToString();
-                    var userCredentials = Newtonsoft.Json.Linq.JObject.Parse(json)["username"]?.ToString();
-                    var passwordCredentials = Newtonsoft.Json.Linq.JObject.Parse(json)["password"]?.ToString();
-
-                    if (!string.IsNullOrEmpty(userId))
-                    {
-                        HttpContext.Session.SetString("UserId", userId);
-                        HttpContext.Session.SetString("userCredentials", userCredentials);
-                        HttpContext.Session.SetString("passwordCredentials", passwordCredentials);
-                    }
-                    return RedirectToAction("Index", "Home");
-                case System.Net.HttpStatusCode.Unauthorized:
-                    ViewBag.Error = "Usuário ou senha inválidos.";
-                    return View();
-                case System.Net.HttpStatusCode.InternalServerError:
-                    ViewBag.Error = "Erro interno do servidor.";
-                    return View();
-                default:
-                    ViewBag.Error = "Erro inesperado.";
-                    return View();
+                ViewBag.Error = "Erro de conexao com o servidor.";
+                return View();
             }
+            catch (Exception)
+            {
+                ViewBag.Error = "Erro interno da aplicacao.";
+                return View();
+            }
+        }
+
+        [HttpPost]
+        [Route("logout")]
+        public IActionResult Logout()
+        {
+            // Limpar todas as informações da sessão
+            HttpContext.Session.Clear();
+            
+            // Redirecionar para a tela de login
+            return Redirect("/login");
         }
     }
 }
