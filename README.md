@@ -139,13 +139,6 @@ GloboClimaFrontend/
 
 ## 🛠️ Tecnologias Utilizadas
 
-### Backend
-- **ASP.NET Core 6.0** - Framework web principal
-- **MVC Pattern** - Arquitetura Model-View-Controller
-- **Razor Pages** - Engine de template para views
-- **HTTP Client** - Consumo de APIs externas
-- **Session Management** - Gerenciamento de sessões de usuário
-
 ### Frontend
 - **HTML5 & CSS3** - Estrutura e estilização
 - **JavaScript ES6+** - Interatividade e animações
