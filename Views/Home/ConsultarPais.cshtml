@@ -1,131 +1,694 @@
+@using System.Linq
 @{
     ViewBag.Title = "Consultar País";
 }
 
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
 <style>
-    .gc-form-container {
-        background: #2d253a;
-        color: #d1c3f7;
-        padding: 32px;
-        border-radius: 12px;
-        max-width: 600px;
+    /* Container principal com estilo moderno otimizado */
+    .gc-countries-container {
+        background: rgba(42, 34, 54, 0.8);
+        border: 1px solid rgba(160, 32, 240, 0.3);
+        border-radius: 20px;
+        padding: 2.5rem;
+        max-width: 90%;
+        width: 100%;
         margin: 0 auto;
-        font-family: 'Orbitron', 'Segoe UI', sans-serif;
-        box-shadow: 0 2px 16px 0 #00000040;
+        box-shadow: 0 8px 32px rgba(160, 32, 240, 0.1);
+        position: relative;
+        min-width: 320px;
     }
-    .gc-form-title {
-        text-align: center;
-        color: #d1c3f7;
-        font-family: 'Orbitron', 'Segoe UI', sans-serif;
-        font-size: 2rem;
+
+    .gc-countries-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Título principal igual ao de Cidades Favoritas */
+    .gc-countries-title {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 2.2rem;
         font-weight: 700;
-        margin-bottom: 18px;
+        color: #ffffff;
+        text-align: center;
+        margin-bottom: 2.5rem;
+        background: linear-gradient(135deg, #a020f0, #7c3aed);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: 1px;
+        text-shadow: 0 0 20px rgba(160, 32, 240, 0.3);
     }
+
+    /* Formulário de consulta */
+    .gc-form-search {
+        background: rgba(42, 34, 54, 0.9);
+        border: 1px solid rgba(160, 32, 240, 0.4);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        backdrop-filter: blur(10px);
+    }
+
+    .gc-form-desc {
+        text-align: center;
+        color: #a78bfa;
+        font-size: 0.95rem;
+        margin-bottom: 1.5rem;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .gc-form-group {
+        margin-bottom: 1.5rem;
+    }
+
     .gc-form-label {
-        color: #d1c3f7;
-        font-size: 1.1rem;
-        margin-bottom: 6px;
-        font-family: 'Orbitron', 'Segoe UI', sans-serif;
+        display: block;
+        color: #e2e8f0;
+        font-family: 'Inter', sans-serif;
+        font-weight: 500;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
     }
+
     .gc-form-input {
         width: 100%;
-        padding: 8px;
-        border-radius: 6px;
-        border: none;
-        background: #b18aff33;
-        color: #fff;
-        font-size: 1rem;
-        margin-bottom: 16px;
-        font-family: 'Orbitron', 'Segoe UI', sans-serif;
+        padding: 0.8rem 1rem;
+        border: 1px solid rgba(160, 32, 240, 0.3);
+        border-radius: 8px;
+        background: rgba(42, 34, 54, 0.6);
+        color: #ffffff;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
     }
-    .gc-form-button {
-        background: linear-gradient(90deg, #a020f0 0%, #7c3aed 100%);
-        color: #fff;
+
+    .gc-form-input:focus {
+        outline: none;
+        border-color: #a020f0;
+        background: rgba(42, 34, 54, 0.8);
+        box-shadow: 0 0 0 3px rgba(160, 32, 240, 0.1);
+    }
+
+    .gc-form-input::placeholder {
+        color: #94a3b8;
+    }
+
+    .gc-btn-primary {
+        background: linear-gradient(135deg, #a020f0, #7c3aed);
+        color: #ffffff;
         border: none;
-        border-radius: 6px;
-        padding: 10px 0;
-        font-size: 1.1rem;
-        font-weight: 700;
+        border-radius: 12px;
+        padding: 1rem 2rem;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 1rem;
         cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: 0 4px 15px rgba(160, 32, 240, 0.3);
         width: 100%;
-        font-family: 'Orbitron', 'Segoe UI', sans-serif;
-        margin-bottom: 10px;
     }
-    .gc-form-desc {
+
+    .gc-btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(160, 32, 240, 0.4);
+    }
+
+    .gc-btn-primary:active {
+        transform: translateY(0);
+    }
+
+    /* Container dos resultados */
+    .gc-results-container {
+        background: rgba(42, 34, 54, 0.9);
+        border: 1px solid rgba(160, 32, 240, 0.4);
+        border-radius: 16px;
+        padding: 2rem;
+    }
+
+    /* Cards de países responsivos */
+    .countries-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .country-card {
+        background: rgba(42, 34, 54, 0.8);
+        border-radius: 12px;
+        border: 1px solid rgba(160, 32, 240, 0.3);
+        box-shadow: 0 4px 16px rgba(160, 32, 240, 0.1);
+        padding: 1.5rem;
         color: #fff;
-        font-size: 1rem;
-        text-align: center;
-        margin-bottom: 18px;
-        font-family: 'Orbitron', 'Segoe UI', sans-serif;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    /* Estilo para card com detalhes expandidos - ocupa linha inteira */
+    .country-card.details-expanded {
+        grid-column: 1 / -1;
+        max-width: none;
+    }
+
+    .country-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(160, 32, 240, 0.15);
+    }
+
+    /* Responsividade aprimorada */
+    @@media (min-width: 1400px) {
+        .gc-countries-container {
+            max-width: 85%;
+            padding: 3rem;
+        }
+        
+        .gc-countries-title {
+            font-size: 2.5rem;
+        }
+    }
+
+    @@media (min-width: 1200px) and (max-width: 1399px) {
+        .gc-countries-container {
+            max-width: 88%;
+            padding: 2.8rem;
+        }
+    }
+
+    @@media (min-width: 992px) and (max-width: 1199px) {
+        .gc-countries-container {
+            max-width: 92%;
+            padding: 2.5rem;
+        }
+    }
+
+    @@media (max-width: 991px) {
+        .gc-countries-container {
+            max-width: 95%;
+            padding: 2rem;
+            margin: 1rem auto;
+        }
+        
+        .gc-countries-title {
+            font-size: 2rem;
+        }
+
+        .countries-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .gc-countries-container {
+            max-width: 98%;
+            padding: 1.5rem;
+            margin: 0.5rem auto;
+        }
+
+        .gc-countries-title {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+        }
+
+        .gc-form-search,
+        .gc-results-container {
+            padding: 1.5rem;
+            border-radius: 12px;
+        }
+
+        .countries-grid {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
 
-<div class="gc-form-container">
-    <div class="gc-form-title">Consultar País</div>
-    <div class="gc-form-desc">Preencha o nome do país abaixo para consultar informações climáticas do país.</div>
-    <form method="post" action="/Consult/ConsultCountryPost">
-        <label for="nomePais" class="gc-form-label">Nome do País</label>
-        <input type="text" id="nomePais" name="nomePais" required class="gc-form-input" placeholder="Ex: Brasil" />
-        <button type="submit" class="gc-form-button">Consultar</button>
-    </form>
-    <!-- Resultado da consulta -->
-    @if (ViewBag.CountryNotFound == true)
-    {
-        <div style="margin-top:2rem; background:#2a2236; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.15); padding:2rem; max-width:700px; margin-left:auto; margin-right:auto; color:#fff; text-align:center;">
-            <img src="/font/bootstrap-icons-1.13.1/exclamation-triangle-fill.svg" alt="Cidade não encontrada" style="width:48px; height:48px; filter:invert(1); margin-bottom:1rem;" />
-            <div style="font-family:'Orbitron',sans-serif; font-size:1.5rem; color:#ff4c4c; margin-bottom:1rem;">Não foi encontrado nenhum pais com esse nome, tente novamente</div>
-        </div>
-    }
-    else if (ViewBag.CountryResult != null)
-    {
-        var countries = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(ViewBag.CountryResult);
-        if (countries == null || countries.Count == 0 || countries[0] == null)
-        {
-            <div style="margin-top:32px; text-align:center; color:#b18aff; font-family:'Orbitron',sans-serif; font-size:1.2rem;">Não foi encontrado nenhum país com esse nome.</div>
-        }
-        else
-        {
-            var pais = countries[0];
-            <div style="margin-top:24px;">
-                <div style="text-align:center;">
-                    <div style="font-family:'Orbitron',sans-serif; color:#b18aff; font-size:1.1rem; margin-bottom:8px;">Bandeira &nbsp; - &nbsp; Brasão</div>
-                    <div style="display:flex; justify-content:center; align-items:center; gap:64px; margin-bottom:10px;">
-                        <img src="@pais.flags.png" alt="Bandeira" style="width:100px; border-radius:8px; box-shadow:0 2px 8px #00000040; background:#fff;" />
-                        <div style="height:100px; width:4px; background:linear-gradient(180deg,#b18aff 0%,#7c3aed 100%); border-radius:2px;"></div>
-                        <img src="@pais.coatOfArms.png" alt="Brasão" style="width:80px; border-radius:8px; box-shadow:0 2px 8px #00000040; background:#fff;" />
-                    </div>
-                    <h2 style="color:#b18aff; font-family:'Orbitron',sans-serif; font-size:1.5rem; margin-bottom:8px;">@pais.name.common (@pais.cca2/@pais.cca3)</h2>
-                    <span style="color:#fff; font-size:1rem;">@pais.name.official</span><br />
-                    <span style="color:#b18aff; font-size:1rem;">Nome nativo:</span> <span style="color:#fff;">@(pais.name?.nativeName?.por?.common != null ? pais.name.nativeName.por.common : "-")</span><br />
+<div class="gc-countries-container">
+    <div class="gc-countries-content">
+        <h1 class="gc-countries-title">
+            <i class="fas fa-globe-americas"></i> Consultar País
+        </h1>
+        
+        <div class="gc-form-search">
+            <div class="gc-form-desc">Preencha o nome do país abaixo para consultar informações do país.</div>
+            <form method="post" action="/Consult/ConsultCountryPost" id="consultForm">
+                <div class="gc-form-group">
+                    <label for="nomePais" class="gc-form-label">
+                        <i class="fas fa-search"></i> Nome do País
+                    </label>
+                    <input type="text" id="nomePais" name="nomePais" required class="gc-form-input" 
+                           placeholder="Ex: Brasil" value="@ViewBag.SearchTerm" />
+                    @if (!string.IsNullOrEmpty(ViewBag.SearchTerm?.ToString()))
+                    {
+                        <input type="hidden" name="originalSearchTerm" value="@ViewBag.SearchTerm" />
+                    }
                 </div>
-                <div style="margin-top:18px;">
-                    <span style="color:#b18aff;font-weight:600;">Capital:</span> <span style="color:#fff;">@(pais?.capital != null && pais.capital.Count > 0 ? pais.capital[0] : "-")</span><br />
-                    <span style="color:#b18aff;font-weight:600;">Região:</span> <span style="color:#fff;">@(pais?.region != null ? pais.region : "-")</span><br />
-                    <span style="color:#b18aff;font-weight:600;">Sub-região:</span> <span style="color:#fff;">@(pais?.subregion != null ? pais.subregion : "-")</span><br />
-                    <span style="color:#b18aff;font-weight:600;">Idioma(s) oficial(is):</span> <span style="color:#fff;">
-                        @if (pais?.languages != null)
-                        {
-                            var idiomas = new List<string>();
-                            foreach (var lang in pais.languages)
-                            {
-                                idiomas.Add(lang?.Value?.ToString() ?? "-");
-                            }
-                            @(idiomas.Count > 0 ? string.Join(", ", idiomas) : "-")
-                        }
-                        else
-                        {
-                            @:"-"
-                        }
-                    </span><br />
-                    <span style="color:#b18aff;font-weight:600;">População:</span> <span style="color:#fff;">@(pais?.population != null ? pais.population : "-")</span><br />
-                    <span style="color:#b18aff;font-weight:600;">Área:</span> <span style="color:#fff;">@(pais?.area != null ? pais.area + " km²" : "-")</span><br />
-                    <span style="color:#b18aff;font-weight:600;">Moeda:</span> <span style="color:#fff;">@(pais?.currencies?.BRL?.name != null ? pais.currencies.BRL.name : "-") (@(pais?.currencies?.BRL?.symbol != null ? pais.currencies.BRL.symbol : "-"))</span><br />
-                    <span style="color:#b18aff;font-weight:600;">Fuso(s) horário(s):</span> <span style="color:#fff;">@(pais?.timezones != null ? string.Join(", ", pais.timezones) : "-")</span><br />
-                    <span style="color:#b18aff;font-weight:600;">Países fronteiriços:</span> <span style="color:#fff;">@(pais?.borders != null ? string.Join(", ", pais.borders) : "-")</span><br />
-                    <span style="color:#b18aff;font-weight:600;">Google Maps:</span> <a href="@(pais?.maps?.googleMaps != null ? pais.maps.googleMaps : "#")" target="_blank" style="color:#4309b6;">Ver localização</a><br />
+                <button type="submit" class="gc-btn-primary">
+                    <i class="fas fa-search"></i> Consultar
+                </button>
+            </form>
+        </div>
+        
+        @* Resultado da consulta *@
+        @if (ViewBag.CountryNotFound == true)
+        {
+            <div class="gc-results-container" style="text-align:center;">
+                <img src="/font/bootstrap-icons-1.13.1/exclamation-triangle-fill.svg" alt="País não encontrado" 
+                     style="width:48px; height:48px; filter:invert(1); margin-bottom:1rem;" />
+                <div style="font-family:'Orbitron',sans-serif; font-size:1.5rem; color:#ff4c4c; margin-bottom:1rem;">
+                    Não foi encontrado nenhum país com esse nome, tente novamente
                 </div>
             </div>
         }
-    }
+        else if (ViewBag.CountryResult != null || ViewBag.IsClientSidePagination == true)
+        {
+            var countries = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(ViewBag.CountryResult);
+            var countriesArray = countries as Newtonsoft.Json.Linq.JArray;
+            
+            <div class="gc-results-container">
+                @if (countriesArray != null && countriesArray.Count > 0)
+                {
+                    @if (countriesArray.Count == 1)
+                    {
+                        @* Exibição para 1 único país *@
+                        var pais = countriesArray[0];
+                        var countryId = "country_" + (pais["cca2"]?.ToString() ?? pais["name"]?["common"]?.ToString()?.Replace(" ", "_"));
+                        
+                        <div style="text-align:center; margin-bottom:2rem; color:#b18aff; font-size:1.1rem; font-family:'Orbitron',sans-serif;">
+                            País encontrado
+                        </div>
+                        
+                        <div class="country-card">
+                            <div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1rem;">
+                                <div style="display:flex; align-items:center; gap:1.5rem;">
+                                    <img src="@pais["flags"]?["png"]" alt="Bandeira" style="width:60px; height:45px; object-fit:cover; border-radius:6px;" />
+                                    <h2 style="margin:0; color:#b18aff; font-family:'Orbitron',sans-serif; font-size:1.8rem;">@pais["name"]?["common"]</h2>
+                                </div>
+                                <button onclick="toggleCountryDetails('@countryId')" id="btn_@countryId"
+                                        style="background:linear-gradient(90deg, #a020f0 0%, #7c3aed 100%); color:#fff; border:none; 
+                                               border-radius:8px; padding:10px 20px; cursor:pointer; font-family:'Orbitron',sans-serif; 
+                                               font-size:0.9rem; font-weight:500; transition:all 0.3s ease; white-space:nowrap;">
+                                    Ver informações
+                                </button>
+                            </div>
+
+                            @* Detalhes expandíveis do país *@
+                            <div id="@countryId" style="display:none; margin-top:2rem; padding-top:2rem; border-top:1px solid rgba(177, 138, 255, 0.2);">
+                                @* Header com nomes e símbolos *@
+                                <div style="margin-bottom:2rem; text-align:center;">
+                                    @if (pais["coatOfArms"]?["png"] != null)
+                                    {
+                                        <div style="display:flex; justify-content:center; margin-bottom:1rem;">
+                                            <div style="text-align:center;">
+                                                <img src="@pais["coatOfArms"]?["png"]" alt="Brasão" style="width:60px; height:60px; object-fit:contain; border-radius:8px; background:rgba(255,255,255,0.1); padding:8px;" />
+                                                <div style="color:#b18aff; font-size:0.8rem; margin-top:0.5rem; font-weight:600;">Brasão</div>
+                                            </div>
+                                        </div>
+                                    }
+                                    
+                                    @* Nomes oficial e comum *@
+                                    <div style="color:#b18aff; font-weight:600; font-size:0.9rem; margin-bottom:0.5rem;">NOME OFICIAL</div>
+                                    <div style="color:#fff; font-size:1.2rem; font-weight:500; margin-bottom:1rem;">@(pais["name"]?["official"]?.ToString() ?? pais["name"]?["common"]?.ToString() ?? "-")</div>
+                                    <div style="color:#b18aff; font-weight:600; font-size:0.9rem; margin-bottom:0.5rem;">NOME COMUM</div>
+                                    <div style="color:#fff; font-size:1.1rem; font-weight:400;">@(pais["name"]?["common"]?.ToString() ?? "-")</div>
+                                </div>
+
+                                @* Informações em grid responsivo *@
+                                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; margin-bottom:1.5rem;">
+                                    <div style="background:rgba(177, 138, 255, 0.05); padding:1rem; border-radius:8px;">
+                                        <div style="color:#b18aff; font-weight:600; font-size:0.8rem; margin-bottom:0.5rem;">CAPITAL</div>
+                                        <div style="color:#fff;">@(pais["capital"]?[0]?.ToString() ?? "-")</div>
+                                    </div>
+                                    <div style="background:rgba(177, 138, 255, 0.05); padding:1rem; border-radius:8px;">
+                                        <div style="color:#b18aff; font-weight:600; font-size:0.8rem; margin-bottom:0.5rem;">REGIÃO</div>
+                                        <div style="color:#fff;">@(pais["region"]?.ToString() ?? "-")@(pais["subregion"] != null && pais["subregion"].ToString() != pais["region"]?.ToString() ? " / " + pais["subregion"].ToString() : "")</div>
+                                    </div>
+                                    <div style="background:rgba(177, 138, 255, 0.05); padding:1rem; border-radius:8px;">
+                                        <div style="color:#b18aff; font-weight:600; font-size:0.8rem; margin-bottom:0.5rem;">POPULAÇÃO</div>
+                                        <div style="color:#fff;">@(pais["population"] != null ? Convert.ToInt64(pais["population"]).ToString("N0", new System.Globalization.CultureInfo("pt-BR")) : "-")</div>
+                                    </div>
+                                    <div style="background:rgba(177, 138, 255, 0.05); padding:1rem; border-radius:8px;">
+                                        <div style="color:#b18aff; font-weight:600; font-size:0.8rem; margin-bottom:0.5rem;">ÁREA</div>
+                                        <div style="color:#fff;">@(pais["area"] != null ? Convert.ToDouble(pais["area"]).ToString("N0", new System.Globalization.CultureInfo("pt-BR")) + " km²" : "-")</div>
+                                    </div>
+                                    <div style="background:rgba(177, 138, 255, 0.05); padding:1rem; border-radius:8px;">
+                                        <div style="color:#b18aff; font-weight:600; font-size:0.8rem; margin-bottom:0.5rem;">IDIOMA(S)</div>
+                                        <div style="color:#fff;">
+                                            @if (pais["languages"] != null)
+                                            {
+                                                var languages = pais["languages"] as Newtonsoft.Json.Linq.JObject;
+                                                if (languages != null)
+                                                {
+                                                    var languageList = new List<string>();
+                                                    foreach (var prop in languages.Properties())
+                                                    {
+                                                        languageList.Add(prop.Value.ToString());
+                                                    }
+                                                    @string.Join(", ", languageList)
+                                                }
+                                                else
+                                                {
+                                                    <text>-</text>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <text>-</text>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div style="background:rgba(177, 138, 255, 0.05); padding:1rem; border-radius:8px;">
+                                        <div style="color:#b18aff; font-weight:600; font-size:0.8rem; margin-bottom:0.5rem;">MOEDA</div>
+                                        <div style="color:#fff;">
+                                            @if (pais["currencies"] != null)
+                                            {
+                                                var currencies = pais["currencies"] as Newtonsoft.Json.Linq.JObject;
+                                                if (currencies != null && currencies.Properties().Any())
+                                                {
+                                                    var currency = currencies.Properties().First().Value;
+                                                    var currencyName = currency["name"]?.ToString() ?? "";
+                                                    var currencySymbol = currency["symbol"]?.ToString() ?? "";
+                                                    @(currencyName + (string.IsNullOrEmpty(currencySymbol) ? "" : " (" + currencySymbol + ")"))
+                                                }
+                                                else
+                                                {
+                                                    <text>-</text>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <text>-</text>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @* Países vizinhos *@
+                                <div style="background:rgba(177, 138, 255, 0.05); padding:1rem; border-radius:8px; margin-bottom:1.5rem;">
+                                    <div style="color:#b18aff; font-weight:600; font-size:0.8rem; margin-bottom:0.5rem;">PAÍSES VIZINHOS</div>
+                                    <div style="color:#fff;">
+                                        @if (pais["borders"] != null)
+                                        {
+                                            var borders = pais["borders"] as Newtonsoft.Json.Linq.JArray;
+                                            if (borders != null && borders.Count > 0)
+                                            {
+                                                @string.Join(", ", borders.Select(b => b.ToString()))
+                                            }
+                                            else
+                                            {
+                                                <text>Nenhum</text>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <text>Nenhum</text>
+                                        }
+                                    </div>
+                                </div>
+
+                                @* Link do Google Maps *@
+                                @if (pais["maps"]?["googleMaps"] != null)
+                                {
+                                    <div style="text-align:center;">
+                                        <a href="@pais["maps"]["googleMaps"]" target="_blank" 
+                                           style="color:#a020f0; text-decoration:none; font-weight:500; font-size:0.9rem; transition:color 0.3s ease; display:inline-flex; align-items:center; gap:0.5rem;">
+                                            <span>📍</span> Ver no Google Maps
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        @* Exibição para múltiplos países *@
+                        <div style="text-align:center; margin-bottom:2rem; color:#b18aff; font-size:1.1rem; font-family:'Orbitron',sans-serif;">
+                            Encontrados @countriesArray.Count países
+                        </div>
+
+                        @if (countriesArray.Count > 10)
+                        {
+                            @* Paginação para muitos países *@
+                            <div id="paginationControls" style="text-align:center; margin-bottom:2rem;">
+                                <button id="btnPrevious" onclick="previousPage()" style="background:rgba(160, 32, 240, 0.3); color:#fff; border:none; border-radius:6px; padding:8px 16px; margin:0 0.5rem; cursor:pointer; font-family:'Orbitron',sans-serif; font-size:0.8rem;">
+                                    ← Anterior
+                                </button>
+                                <span id="pageNumbers" style="color:#b18aff; font-family:'Orbitron',sans-serif; margin:0 1rem;"></span>
+                                <button id="btnNext" onclick="nextPage()" style="background:rgba(160, 32, 240, 0.3); color:#fff; border:none; border-radius:6px; padding:8px 16px; margin:0 0.5rem; cursor:pointer; font-family:'Orbitron',sans-serif; font-size:0.8rem;">
+                                    Próxima →
+                                </button>
+                            </div>
+
+                            <div id="resultsContainer" style="margin-bottom:2rem;">
+                                <div style="text-align:center; color:#a78bfa; font-size:0.9rem; margin-bottom:1.5rem;">
+                                    Exibindo 10 de @countriesArray.Count países
+                                </div>
+                                <div class="countries-grid" id="countriesGrid">
+                                    @* Países serão inseridos aqui via JavaScript *@
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            @* Exibição direta para poucos países *@
+                            <div class="countries-grid">
+                                @foreach (var pais in countriesArray.Take(10))
+                                {
+                                    var countryId = "js_country_" + countriesArray.ToList().IndexOf(pais);
+                                    <div class="country-card">
+                                        <div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1rem;">
+                                            <div style="display:flex; align-items:center; gap:1rem; flex:1;">
+                                                <img src="@pais["flags"]?["png"]" alt="Bandeira" style="width:40px; height:30px; object-fit:cover; border-radius:4px;" />
+                                                <h3 style="margin:0; color:#b18aff; font-family:'Orbitron',sans-serif; font-size:1.2rem; word-break:break-word;">@pais["name"]?["common"]</h3>
+                                            </div>
+                                            <button onclick="toggleCountryDetails('@countryId')" id="btn_@countryId"
+                                                    style="background:linear-gradient(90deg, #a020f0 0%, #7c3aed 100%); color:#fff; border:none; 
+                                                           border-radius:6px; padding:8px 12px; cursor:pointer; font-family:'Orbitron',sans-serif; 
+                                                           font-size:0.8rem; font-weight:500; transition:all 0.3s ease; white-space:nowrap; flex-shrink:0;">
+                                                Ver informações
+                                            </button>
+                                        </div>
+                                        @* O conteúdo expandível será similar ao país único, mas mais compacto *@
+                                    </div>
+                                }
+                            </div>
+                        }
+                    }
+                }
+                else
+                {
+                    <div style="text-align:center; color:#b18aff; font-family:'Orbitron',sans-serif; font-size:1.2rem;">
+                        Nenhum país encontrado.
+                    </div>
+                }
+            </div>
+        }
+    </div>
 </div>
+
+<script>
+    // Função para alternar detalhes do país
+    function toggleCountryDetails(countryId) {
+        const detailsDiv = document.getElementById(countryId);
+        const button = document.getElementById('btn_' + countryId);
+        const card = detailsDiv ? detailsDiv.closest('.country-card') : null;
+        
+        if (detailsDiv && button && card) {
+            if (detailsDiv.style.display === 'none' || detailsDiv.style.display === '') {
+                detailsDiv.style.display = 'block';
+                button.textContent = 'Ocultar informações';
+                card.classList.add('details-expanded');
+            } else {
+                detailsDiv.style.display = 'none';
+                button.textContent = 'Ver informações';
+                card.classList.remove('details-expanded');
+            }
+        }
+    }
+
+    // Paginação para múltiplos países
+    let allCountries = [];
+    let currentPage = 1;
+    const itemsPerPage = 10;
+
+    @if (ViewBag.CountryResult != null)
+    {
+        <text>
+        try {
+            allCountries = @Html.Raw(ViewBag.CountryResult);
+            if (allCountries.length > 10) {
+                document.addEventListener('DOMContentLoaded', function() {
+                    setupPagination();
+                });
+            }
+        } catch (e) {
+            console.error('Erro ao carregar países:', e);
+        }
+        </text>
+    }
+
+    function setupPagination() {
+        showPage(1);
+        updatePaginationControls();
+    }
+
+    function showPage(page) {
+        currentPage = page;
+        const startIndex = (page - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const pageCountries = allCountries.slice(startIndex, endIndex);
+        
+        const container = document.getElementById('countriesGrid');
+        if (container) {
+            container.innerHTML = '';
+            pageCountries.forEach((country, index) => {
+                const card = createCountryCard(country, startIndex + index);
+                container.appendChild(card);
+            });
+        }
+        
+        updatePaginationControls();
+    }
+
+    function createCountryCard(country, index) {
+        const card = document.createElement('div');
+        card.className = 'country-card';
+        
+        const flag = country.flags?.png || '';
+        const coatOfArms = country.coatOfArms?.png || '';
+        const name = country.name?.common || 'Nome não disponível';
+        const officialName = country.name?.official || name;
+        const capital = country.capital?.[0] || '-';
+        const region = country.region || '-';
+        const subregion = country.subregion || '-';
+        const population = country.population ? country.population.toLocaleString('pt-BR') : '-';
+        const area = country.area ? country.area.toLocaleString('pt-BR') + ' km²' : '-';
+        const languages = country.languages ? Object.values(country.languages).join(', ') : '-';
+        const countryId = 'js_country_' + index;
+        
+        // Processamento de moeda
+        let currencyInfo = '-';
+        if (country.currencies && Object.keys(country.currencies).length > 0) {
+            const currencyKey = Object.keys(country.currencies)[0];
+            const currency = country.currencies[currencyKey];
+            const currencyName = currency.name || '';
+            const currencySymbol = currency.symbol || '';
+            currencyInfo = currencyName + (currencySymbol ? ' (' + currencySymbol + ')' : '');
+        }
+        
+        // Países vizinhos
+        const borders = country.borders && country.borders.length > 0 ? country.borders.join(', ') : 'Nenhum';
+        
+        // Link do Google Maps
+        const googleMapsLink = country.maps?.googleMaps || '#';
+        
+        card.innerHTML = `
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1rem;">
+                <div style="display:flex; align-items:center; gap:1rem; flex:1;">
+                    <img src="${flag}" alt="Bandeira" style="width:40px; height:30px; object-fit:cover; border-radius:4px;" />
+                    <h3 style="margin:0; color:#b18aff; font-family:'Orbitron',sans-serif; font-size:1.2rem; word-break:break-word;">${name}</h3>
+                </div>
+                <button onclick="toggleCountryDetails('${countryId}')" id="btn_${countryId}"
+                        style="background:linear-gradient(90deg, #a020f0 0%, #7c3aed 100%); color:#fff; border:none; 
+                               border-radius:6px; padding:8px 12px; cursor:pointer; font-family:'Orbitron',sans-serif; 
+                               font-size:0.8rem; font-weight:500; transition:all 0.3s ease; white-space:nowrap; flex-shrink:0;">
+                    Ver informações
+                </button>
+            </div>
+            
+            <div id="${countryId}" style="display:none; padding-top:1rem; border-top:1px solid rgba(177, 138, 255, 0.2);">
+                <!-- Header compacto com símbolos e nomes -->
+                <div style="margin-bottom:1rem; text-align:center;">
+                    ${coatOfArms ? `
+                    <div style="display:flex; justify-content:center; margin-bottom:1rem;">
+                        <div style="text-align:center;">
+                            <img src="${coatOfArms}" alt="Brasão" style="width:40px; height:40px; object-fit:contain; border-radius:6px; background:rgba(255,255,255,0.1); padding:6px;" />
+                            <div style="color:#b18aff; font-size:0.7rem; margin-top:0.3rem; font-weight:600;">Brasão</div>
+                        </div>
+                    </div>
+                    ` : ''}
+                    
+                    <!-- Nomes -->
+                    <div style="color:#b18aff; font-weight:600; font-size:0.7rem; margin-bottom:0.3rem;">NOME OFICIAL</div>
+                    <div style="color:#fff; font-size:0.85rem; font-weight:500; margin-bottom:0.5rem;">${officialName}</div>
+                </div>
+
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:0.8rem; font-size:0.8rem;">
+                    <div style="background:rgba(177, 138, 255, 0.05); padding:0.6rem; border-radius:4px;">
+                        <div style="color:#b18aff; font-weight:600; font-size:0.7rem; margin-bottom:0.3rem;">CAPITAL</div>
+                        <div style="color:#fff;">${capital}</div>
+                    </div>
+                    <div style="background:rgba(177, 138, 255, 0.05); padding:0.6rem; border-radius:4px;">
+                        <div style="color:#b18aff; font-weight:600; font-size:0.7rem; margin-bottom:0.3rem;">REGIÃO</div>
+                        <div style="color:#fff;">${region}${subregion && subregion !== region ? ' / ' + subregion : ''}</div>
+                    </div>
+                    <div style="background:rgba(177, 138, 255, 0.05); padding:0.6rem; border-radius:4px;">
+                        <div style="color:#b18aff; font-weight:600; font-size:0.7rem; margin-bottom:0.3rem;">POPULAÇÃO</div>
+                        <div style="color:#fff;">${population}</div>
+                    </div>
+                    <div style="background:rgba(177, 138, 255, 0.05); padding:0.6rem; border-radius:4px;">
+                        <div style="color:#b18aff; font-weight:600; font-size:0.7rem; margin-bottom:0.3rem;">ÁREA</div>
+                        <div style="color:#fff;">${area}</div>
+                    </div>
+                    <div style="background:rgba(177, 138, 255, 0.05); padding:0.6rem; border-radius:4px;">
+                        <div style="color:#b18aff; font-weight:600; font-size:0.7rem; margin-bottom:0.3rem;">IDIOMA(S)</div>
+                        <div style="color:#fff;">${languages}</div>
+                    </div>
+                    <div style="background:rgba(177, 138, 255, 0.05); padding:0.6rem; border-radius:4px;">
+                        <div style="color:#b18aff; font-weight:600; font-size:0.7rem; margin-bottom:0.3rem;">MOEDA</div>
+                        <div style="color:#fff;">${currencyInfo}</div>
+                    </div>
+                    <div style="background:rgba(177, 138, 255, 0.05); padding:0.6rem; border-radius:4px; grid-column:1/-1;">
+                        <div style="color:#b18aff; font-weight:600; font-size:0.7rem; margin-bottom:0.3rem;">PAÍSES VIZINHOS</div>
+                        <div style="color:#fff;">${borders}</div>
+                    </div>
+                </div>
+                ${googleMapsLink !== '#' ? `
+                <div style="margin-top:1rem; text-align:center;">
+                    <a href="${googleMapsLink}" target="_blank" 
+                       style="color:#a020f0; text-decoration:none; font-weight:500; font-size:0.8rem; transition:color 0.3s ease; display:inline-flex; align-items:center; gap:0.3rem;">
+                        <span>📍</span> Ver no Google Maps
+                    </a>
+                </div>
+                ` : ''}
+            </div>
+        `;
+        
+        return card;
+    }
+
+    function updatePaginationControls() {
+        const totalPages = Math.ceil(allCountries.length / itemsPerPage);
+        const pageNumbers = document.getElementById('pageNumbers');
+        const btnPrevious = document.getElementById('btnPrevious');
+        const btnNext = document.getElementById('btnNext');
+        
+        if (pageNumbers) {
+            pageNumbers.textContent = `Página ${currentPage} de ${totalPages}`;
+        }
+        
+        if (btnPrevious) {
+            btnPrevious.disabled = currentPage === 1;
+            btnPrevious.style.opacity = currentPage === 1 ? '0.5' : '1';
+        }
+        
+        if (btnNext) {
+            btnNext.disabled = currentPage === totalPages;
+            btnNext.style.opacity = currentPage === totalPages ? '0.5' : '1';
+        }
+    }
+
+    function previousPage() {
+        if (currentPage > 1) {
+            showPage(currentPage - 1);
+        }
+    }
+
+    function nextPage() {
+        const totalPages = Math.ceil(allCountries.length / itemsPerPage);
+        if (currentPage < totalPages) {
+            showPage(currentPage + 1);
+        }
+    }
+</script>

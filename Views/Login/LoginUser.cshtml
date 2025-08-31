@@ -199,6 +199,79 @@
         transform: translateY(0);
     }
 
+    .gc-btn-secondary {
+        background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+        border: 1px solid rgba(160, 32, 240, 0.3);
+    }
+
+    .gc-btn-secondary:hover {
+        background: linear-gradient(135deg, #8b5cf6 0%, #c084fc 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+    }
+
+    .gc-success-message {
+        background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+        border: 1px solid rgba(34, 197, 94, 0.3);
+        color: #10b981;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        text-align: center;
+        font-size: 0.9rem;
+        backdrop-filter: blur(10px);
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        min-width: 300px;
+        max-width: 500px;
+        box-shadow: 0 10px 25px rgba(16, 185, 129, 0.2);
+        animation: slideDown 0.5s ease-out;
+    }
+
+    .gc-error-message {
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #ef4444;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        text-align: center;
+        font-size: 0.9rem;
+        backdrop-filter: blur(10px);
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        min-width: 300px;
+        max-width: 500px;
+        box-shadow: 0 10px 25px rgba(239, 68, 68, 0.2);
+        animation: slideDown 0.5s ease-out;
+    }
+
+    @@keyframes slideDown {
+        0% {
+            transform: translateX(-50%) translateY(-100px);
+            opacity: 0;
+        }
+        100% {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+    }
+
+    @@keyframes slideUp {
+        0% {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        100% {
+            transform: translateX(-50%) translateY(-100px);
+            opacity: 0;
+        }
+    }
+
     .gc-btn::before {
         content: '';
         position: absolute;
@@ -384,7 +457,19 @@
             <button type="submit" class="gc-btn" id="loginBtn">
                 <span id="btnText">Entrar</span>
             </button>
+            <button type="button" class="gc-btn gc-btn-secondary" id="registerBtn" style="margin-top: 1rem;" onclick="openRegisterModal()">
+                <span>Registre-se</span>
+            </button>
         </form>
+    </div>
+        @if (ViewBag.RegisterSuccess != null)
+        {
+            <div class="gc-success-message">@ViewBag.RegisterSuccess</div>
+        }
+        @if (ViewBag.RegisterError != null)
+        {
+            <div class="gc-error-message">@ViewBag.RegisterError</div>
+        }
     </div>
 </div>
 
@@ -404,6 +489,36 @@
     </div>
 </div>
 
+    <!-- Modal de registro -->
+    <div id="registerModal" class="error-modal" style="display:none;">
+        <div class="error-modal-content">
+            <div class="error-modal-header">
+                <i class="fas fa-user-plus error-modal-icon"></i>
+                <h3 class="error-modal-title">Criar Conta</h3>
+            </div>
+            <form id="registerForm" method="post" action="/register">
+                <div class="gc-form-group">
+                    <label for="registerUsername" class="gc-label">Nome de usuário</label>
+                    <div class="gc-input-container">
+                        <i class="fas fa-user gc-input-icon"></i>
+                        <input type="text" class="gc-input" id="registerUsername" name="username" placeholder="Digite seu usuário" required />
+                    </div>
+                </div>
+                <div class="gc-form-group">
+                    <label for="registerPassword" class="gc-label">Senha</label>
+                    <div class="gc-input-container">
+                        <i class="fas fa-lock gc-input-icon"></i>
+                        <input type="password" class="gc-input" id="registerPassword" name="password" placeholder="Digite sua senha" required />
+                    </div>
+                </div>
+                <button type="submit" class="gc-btn gc-btn-secondary">
+                    <span>Criar Conta</span>
+                </button>
+            </form>
+            <button class="error-modal-close" style="margin-top:1rem;" onclick="closeRegisterModal()">Cancelar</button>
+        </div>
+    </div>
+
 <script>
     // Mostrar modal de erro se houver erro no ViewBag
     @if (ViewBag.Error != null)
@@ -414,6 +529,26 @@
         });
         </text>
     }
+
+    // Auto-remover mensagens de sucesso/erro após 5 segundos
+    document.addEventListener('DOMContentLoaded', function() {
+        const successMessage = document.querySelector('.gc-success-message');
+        const errorMessage = document.querySelector('.gc-error-message');
+        
+        if (successMessage) {
+            setTimeout(() => {
+                successMessage.style.animation = 'slideUp 0.5s ease-in forwards';
+                setTimeout(() => successMessage.remove(), 500);
+            }, 5000);
+        }
+        
+        if (errorMessage) {
+            setTimeout(() => {
+                errorMessage.style.animation = 'slideUp 0.5s ease-in forwards';
+                setTimeout(() => errorMessage.remove(), 500);
+            }, 5000);
+        }
+    });
 
     function showErrorModal(message) {
         document.getElementById('errorMessage').textContent = message;
@@ -431,6 +566,25 @@
         document.getElementById('errorModal').style.display = 'none';
     }
 
+        // Abrir modal de registro
+        function openRegisterModal() {
+            document.getElementById('registerModal').style.display = 'block';
+        }
+        function closeRegisterModal() {
+            document.getElementById('registerModal').style.display = 'none';
+        }
+
+        // Fechar modal clicando fora dele
+        window.onclick = function(event) {
+            const errorModal = document.getElementById('errorModal');
+            const registerModal = document.getElementById('registerModal');
+            if (event.target === errorModal) {
+                closeErrorModal();
+            }
+            if (event.target === registerModal) {
+                closeRegisterModal();
+            }
+        }
     // Fechar modal clicando fora dele
     window.onclick = function(event) {
         const modal = document.getElementById('errorModal');

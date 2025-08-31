@@ -123,5 +123,80 @@ namespace GloboClimaFrontend.Controllers
             // Redirecionar para a tela de login
             return Redirect("/login");
         }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> RegisterUser(string username, string password)
+        {
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            {
+                ViewBag.RegisterError = "Usuário e senha são obrigatórios.";
+                return View("LoginUser");
+            }
+
+            if (string.IsNullOrEmpty(_baseUrl) || string.IsNullOrEmpty(_basicUsername) || string.IsNullOrEmpty(_basicPassword))
+            {
+                ViewBag.RegisterError = "Erro de configuração do sistema.";
+                return View("LoginUser");
+            }
+
+            try
+            {
+                using var client = new HttpClient();
+                var basicAuth = Convert.ToBase64String(
+                    System.Text.Encoding.UTF8.GetBytes($"{_basicUsername}:{_basicPassword}")
+                );
+                client.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", basicAuth);
+
+                var url = $"{_baseUrl}/api/auth/CreateUser";
+                var body = new
+                {
+                    username = username,
+                    password = password
+                };
+                var jsonBody = Newtonsoft.Json.JsonConvert.SerializeObject(body);
+                var content = new StringContent(jsonBody, System.Text.Encoding.UTF8, "application/json");
+
+                var response = await client.PostAsync(url, content);
+
+                if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    // Parse da resposta JSON do backend
+                    var responseJson = await response.Content.ReadAsStringAsync();
+                    var createdUser = Newtonsoft.Json.Linq.JObject.Parse(responseJson);
+                    var userId = createdUser["userId"]?.ToString();
+                    var encryptedUsername = createdUser["username"]?.ToString();
+                    var encryptedPassword = createdUser["password"]?.ToString();
+                    
+                    ViewBag.RegisterSuccess = $"Usuário registrado com sucesso! Faça login.";
+                    return View("LoginUser");
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    ViewBag.RegisterError = "Este nome de usuário já existe. Escolha outro nome.";
+                    return View("LoginUser");
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    ViewBag.RegisterError = "Não autorizado. Verifique as credenciais de configuração.";
+                    return View("LoginUser");
+                }
+                else
+                {
+                    ViewBag.RegisterError = "Erro inesperado ao registrar usuário.";
+                    return View("LoginUser");
+                }
+            }
+            catch (HttpRequestException)
+            {
+                ViewBag.RegisterError = "Erro de conexão com o servidor.";
+                return View("LoginUser");
+            }
+            catch (Exception)
+            {
+                ViewBag.RegisterError = "Erro interno da aplicação.";
+                return View("LoginUser");
+            }
+        }
     }
 }

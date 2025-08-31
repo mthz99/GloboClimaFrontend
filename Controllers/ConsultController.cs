@@ -66,8 +66,8 @@ namespace GloboClimaFrontend.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ConsultCountryPost(string nomePais)
-        {
+        public async Task<IActionResult> ConsultCountryPost(string nomePais, int page = 1)
+        {        
             var userId = HttpContext.Session.GetString("UserId");
             var username = HttpContext.Session.GetString("userCredentials");
             var password = HttpContext.Session.GetString("passwordCredentials");
@@ -107,6 +107,7 @@ namespace GloboClimaFrontend.Controllers
                 ViewBag.CountryResult = result;
                 ViewBag.CountryNotFound = false;
             }
+            ViewBag.SearchTerm = nomePais;
             ViewBag.Form = "ConsultarPais";
             return View("~/Views/Home/Index.cshtml");
         }

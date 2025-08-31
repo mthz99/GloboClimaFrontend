@@ -11,9 +11,10 @@ namespace GloboClimaFrontend.Controllers
         }
 
         [HttpGet]
-        public IActionResult ConsultarClimaCidade()
+        public IActionResult ConsultarClimaCidade(string? paisSelecionado = null)
         {
             ViewBag.Form = "ConsultarClimaCidade";
+            ViewBag.PaisSelecionado = paisSelecionado; // Passar o país selecionado para a view
             return View("Index");
         }
     }
